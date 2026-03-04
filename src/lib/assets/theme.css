@@ -1,0 +1,66 @@
+/*
+ * Global theme variables.
+ *
+ * Convention:
+ *   - Define ALL colours as CSS custom properties in [data-theme] blocks
+ *   - Components use `var(--color-xxx)` exclusively — never hard-coded colours
+ *   - Adding a new theme = adding a new [data-theme="xxx"] block
+ */
+
+/* ─── Light theme (default) ───────────────────────────── */
+[data-theme='light'] {
+	--color-bg: #ffffff;
+	--color-bg-secondary: #f4f4f5;
+	--color-surface: #ffffff;
+	--color-text: #1a1a2e;
+	--color-text-secondary: #555566;
+	--color-primary: #ff3e00;
+	--color-primary-hover: #cc3200;
+	--color-border: #e0e0e0;
+	--color-shadow: rgba(0, 0, 0, 0.08);
+}
+
+/* ─── Dark theme ──────────────────────────────────────── */
+[data-theme='dark'] {
+	--color-bg: #0f0f1a;
+	--color-bg-secondary: #1a1a2e;
+	--color-surface: #1e1e32;
+	--color-text: #e8e8f0;
+	--color-text-secondary: #9999aa;
+	--color-primary: #ff6b3d;
+	--color-primary-hover: #ff8a5c;
+	--color-border: #2a2a40;
+	--color-shadow: rgba(0, 0, 0, 0.3);
+}
+
+/* ─── Base reset & global styles ──────────────────────── */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+html {
+	/* Smooth transition between themes */
+	color-scheme: light dark;
+}
+
+body {
+	font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+	background-color: var(--color-bg);
+	color: var(--color-text);
+	transition:
+		background-color 0.3s ease,
+		color 0.3s ease;
+	line-height: 1.6;
+}
+
+a {
+	color: var(--color-primary);
+}
+
+a:hover {
+	color: var(--color-primary-hover);
+}
