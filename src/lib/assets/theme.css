@@ -7,7 +7,7 @@
  *   - Adding a new theme = adding a new [data-theme="xxx"] block
  */
 
-/* ─── Light theme (default) ───────────────────────────── */
+/* --- Light theme (default) ----------------------------- */
 [data-theme='light'] {
 	--color-bg: #ffffff;
 	--color-bg-secondary: #f4f4f5;
@@ -18,9 +18,13 @@
 	--color-primary-hover: #cc3200;
 	--color-border: #e0e0e0;
 	--color-shadow: rgba(0, 0, 0, 0.08);
+	--indicator-fill: #1a1a2e;
+	--gear-sun: #2dd36f; /* Adjusted to a more vibrant green */
+	--gear-planet: #05a6b8; /* Adjusted to a slightly greener and less saturated blue */
+	--gear-ring: #f7b500; /* Adjusted to a less orange yellow */
 }
 
-/* ─── Dark theme ──────────────────────────────────────── */
+/* --- Dark theme ---------------------------------------- */
 [data-theme='dark'] {
 	--color-bg: #0f0f1a;
 	--color-bg-secondary: #1a1a2e;
@@ -31,9 +35,13 @@
 	--color-primary-hover: #ff8a5c;
 	--color-border: #2a2a40;
 	--color-shadow: rgba(0, 0, 0, 0.3);
+	--indicator-fill: #ffffff;
+	--gear-sun: #2dd36f; /* Adjusted to a more vibrant green */
+	--gear-planet: #05a6b8; /* Adjusted to a slightly greener and less saturated blue */
+	--gear-ring: #f7b500; /* Adjusted to a less orange yellow */
 }
 
-/* ─── Base reset & global styles ──────────────────────── */
+/* --- Base reset & global styles ------------------------ */
 *,
 *::before,
 *::after {
