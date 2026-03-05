@@ -22,6 +22,8 @@
 	--gear-sun: #2dd36f; /* Adjusted to a more vibrant green */
 	--gear-planet: #05a6b8; /* Adjusted to a slightly greener and less saturated blue */
 	--gear-ring: #f7b500; /* Adjusted to a less orange yellow */
+	--gear-carrier: #05a6b8;
+	--indicator-carrier: #1a1a2e;
 }
 
 /* --- Dark theme ---------------------------------------- */
@@ -39,6 +41,8 @@
 	--gear-sun: #2dd36f; /* Adjusted to a more vibrant green */
 	--gear-planet: #05a6b8; /* Adjusted to a slightly greener and less saturated blue */
 	--gear-ring: #f7b500; /* Adjusted to a less orange yellow */
+	--gear-carrier: #05a6b8;
+	--indicator-carrier: #ffffff;
 }
 
 /* --- Base reset & global styles ------------------------ */
