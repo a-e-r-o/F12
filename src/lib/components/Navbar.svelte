@@ -11,7 +11,7 @@
 		{ href: '/', label: 'Accueil', icon: '🏠' },
 		{ href: '/gears-svg', label: 'Engrenages SVG', icon: '⚙️' },
 		{ href: '/gears-canvas', label: 'Engrenages Canvas', icon: '🎨' },
-		{ href: '/markus', label: 'Markus', icon: '🐧' }
+		{ href: '/game-of-life', label: 'Jeu de la vie', icon: '🧬' }
 	];
 
 	onMount(() => {

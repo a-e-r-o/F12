@@ -222,12 +222,78 @@
 		planetAngles.map((_, i) => carrierAngle * (1 + ratioSunPlanet) - sunAngle * ratioSunPlanet + meshOffsets[i])
 	);
 	let ringAngle = $derived(carrierAngle * (1 + ratioSunRing) - sunAngle * ratioSunRing + ringMeshOffset);
+
+	// --- Slider display limits ---
+	const sunMin = -6.5, sunMax = 6.5;
+	const carrierMin = 0, carrierMax = 4.5;
+	const ringDisplayMin = -2.5, ringDisplayMax = 9;
+
+	// Ring speed from Willis formula applied to velocities
+	let ringSpeed = $derived(carrierSpeed * (1 + ratioSunRing) - speed * ratioSunRing);
+	let ringSpeedClamped = $derived(Math.max(ringDisplayMin, Math.min(ringDisplayMax, ringSpeed)));
+
+	// Connector line / slider layout — must match CSS pixel values
+	const sliderH = 200;
+	const thumbR = 10;
+	const trackH = sliderH - 2 * thumbR;
+	const colW = 50;
+	const colGap = 12;
+	const labelH = 24;
+	const connectorW = 3 * colW + 2 * colGap;
+	const carrier_x = colW / 2;
+	const sun_x = colW + colGap + colW / 2;
+	const ring_x = 2 * (colW + colGap) + colW / 2;
+
+	// Thumb Y positions for connector line (from top of slider, in px)
+	let sunThumbY = $derived((sunMax - speed) / (sunMax - sunMin) * trackH + thumbR);
+	let carrierThumbY = $derived((carrierMax - carrierSpeed) / (carrierMax - carrierMin) * trackH + thumbR);
+	let ringThumbY = $derived((ringDisplayMax - ringSpeedClamped) / (ringDisplayMax - ringDisplayMin) * trackH + thumbR);
 </script>
 
 <div class="gears-svg">
-	<h2>Train Épicycloïdal — SVG</h2>
-
-	<svg viewBox="0 0 {svgSize} {svgSize}" width={svgSize} height={svgSize}>
+	<div class="controls">
+			<div class="sliders-area">
+				<svg
+				class="thumb-connector"
+				width={connectorW}
+				height={sliderH}
+				style="top: {labelH}px"
+			>
+				<line x1={carrier_x} y1={carrierThumbY} x2={sun_x} y2={sunThumbY} class="connector-line" />
+				<line x1={sun_x} y1={sunThumbY} x2={ring_x} y2={ringThumbY} class="connector-line connector-line-ring" />
+			</svg>
+			<!-- Porte-satellite -->
+			<div class="slider-col">
+				<span class="slider-label">ICE</span>
+				<div class="slider-wrapper planet" style="--zero-pct: {carrierMax / (carrierMax - carrierMin) * 100}">
+					<input type="range" bind:value={carrierSpeed} min={carrierMin} max={carrierMax} step="0.1" />
+					<div class="zero-indicator"></div>
+				</div>
+				<strong>{carrierSpeed.toFixed(1)}</strong>
+			</div>
+			<!-- Soleil -->
+			<div class="slider-col">
+				<span class="slider-label">MG1</span>
+				<div class="slider-wrapper sun" style="--zero-pct: {sunMax / (sunMax - sunMin) * 100}">
+					<input type="range" bind:value={speed} min={sunMin} max={sunMax} step="0.1" />
+					<div class="zero-indicator"></div>
+				</div>
+				<strong>{speed*1000}</strong>
+			</div>
+			<!-- Couronne (lecture seule) -->
+			<div class="slider-col ring-col">
+				<span class="slider-label">MG2</span>
+				<div class="slider-wrapper ring" style="--zero-pct: {ringDisplayMax / (ringDisplayMax - ringDisplayMin) * 100}">
+					<input type="range" disabled value={ringSpeedClamped} min={ringDisplayMin} max={ringDisplayMax} step="0.1" />
+					<div class="zero-indicator"></div>
+				</div>
+				<strong>{ringSpeed.toFixed(2)}</strong>
+			</div>
+		</div>
+		<p class="hint">Valeurs négatives = rotation inversée</p>
+	</div>
+	
+	<svg class="gear-diagram" viewBox="0 0 {svgSize} {svgSize}" width={svgSize} height={svgSize}>
 		<!-- Ring gear (drawn first, behind everything) -->
 		<g transform="translate({cx}, {cy}) rotate({ringAngle})">
 			<path d={ringPath} class="gear ring" fill-rule="evenodd" />
@@ -241,7 +307,7 @@
 				/>
 			</g>
 		</g>
-
+		
 		<!-- Carrier (porte-satellite) -->
 		<g transform="translate({cx}, {cy}) rotate({carrierAngle})">
 			<path d={carrierAnnulusPath} class="gear carrier" fill-rule="evenodd" />
@@ -256,17 +322,17 @@
 				/>
 			</g>
 		</g>
-
+		
 		<!-- Planets -->
 		{#each planetAngles as φ, i}
-			{@const rad = ((φ + carrierAngle) * Math.PI) / 180}
-			{@const px = cx + centerDist * Math.cos(rad)}
-			{@const py = cy + centerDist * Math.sin(rad)}
-			<g transform="translate({px}, {py}) rotate({planetRotations[i]})">
-				<path d={planetPath} class="gear planet" />
-				<circle r={planetHub} class="hub" />
-				<g transform="rotate({planetGapAngle})">
-					<rect
+		{@const rad = ((φ + carrierAngle) * Math.PI) / 180}
+		{@const px = cx + centerDist * Math.cos(rad)}
+		{@const py = cy + centerDist * Math.sin(rad)}
+		<g transform="translate({px}, {py}) rotate({planetRotations[i]})">
+			<path d={planetPath} class="gear planet" />
+			<circle r={planetHub} class="hub" />
+			<g transform="rotate({planetGapAngle})">
+				<rect
 						x={-planetBarW / 2}
 						y={-RfPlanet}
 						width={planetBarW}
@@ -275,14 +341,14 @@
 					/>
 				</g>
 			</g>
-		{/each}
-
-		<!-- Sun gear (center) -->
-		<g transform="translate({cx}, {cy}) rotate({sunAngle})">
-			<path d={sunPath} class="gear sun" />
-			<circle r={sunHub} class="hub" />
-			<g transform="rotate({sunGapAngle})">
-				<rect
+			{/each}
+			
+			<!-- Sun gear (center) -->
+			<g transform="translate({cx}, {cy}) rotate({sunAngle})">
+				<path d={sunPath} class="gear sun" />
+				<circle r={sunHub} class="hub" />
+				<g transform="rotate({sunGapAngle})">
+					<rect
 					x={-sunBarW / 2}
 					y={-RfSun}
 					width={sunBarW}
@@ -292,43 +358,25 @@
 			</g>
 		</g>
 	</svg>
-
-	<div class="controls">
-		<label>
-			Vitesse soleil : <strong>{speed.toFixed(1)}</strong>
-			<div class="slider-wrapper" style="--zero-pct: {((0 - (-5)) / (30 - (-5))) * 100}">
-				<input type="range" bind:value={speed} min="-5" max="30" step="0.1" />
-				<div class="zero-indicator"></div>
-			</div>
-		</label>
-		<label>
-			Vitesse porte-satellite : <strong>{carrierSpeed.toFixed(1)}</strong>
-			<div class="slider-wrapper" style="--zero-pct: {((0 - (-5)) / (30 - (-5))) * 100}">
-				<input type="range" bind:value={carrierSpeed} min="-5" max="30" step="0.1" />
-				<div class="zero-indicator"></div>
-			</div>
-		</label>
-		<p class="hint">Valeurs négatives = rotation inversée</p>
-	</div>
 </div>
 
 <style>
+	/* --- Layout & typography ------------------ */
+
 	.gears-svg {
 		display: flex;
-		flex-direction: column;
+		flex-direction: row;
 		align-items: center;
 		gap: 1.5rem;
 		padding: 2rem 1rem;
 	}
 
-	h2 {
-		color: var(--color-text);
-		font-size: 1.4rem;
-	}
+	/* --- SVG diagram and indicators ----------- */
 
-	svg {
+	.gear-diagram {
 		max-width: 100%;
 		height: auto;
+		flex-shrink: 0;
 	}
 
 	.gear {
@@ -371,48 +419,113 @@
 		opacity: 0.8;
 	}
 
+	/* --- Controls (sliders) ------------------ */
+
 	.controls {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 0.5rem;
+		gap: 1rem;
+		flex-shrink: 0;
 	}
 
-	label {
+	.sliders-area {
 		display: flex;
+		flex-direction: row;
+		gap: 12px; /* = colGap in script */
+		position: relative;
+		align-items: flex-start;
+	}
+
+	.slider-col {
+		display: flex;
+		flex-direction: column;
 		align-items: center;
-		gap: 0.75rem;
-		font-size: 1rem;
+		gap: 4px;
+		width: 50px; /* = colW in script */
+	}
+
+	.slider-label {
+		font-size: 0.7rem;
+		color: var(--color-text-secondary);
+		text-align: center;
+		height: 24px; /* = labelH in script */
+		line-height: 24px;
+		white-space: nowrap;
+	}
+
+	.slider-col strong {
+		font-size: 0.8rem;
 		color: var(--color-text);
+		text-align: center;
 	}
 
 	.slider-wrapper {
 		position: relative;
-		width: 220px;
-		height: 24px;
+		width: 20px;
+		height: 200px; /* = sliderH in script */
 		display: flex;
 		align-items: center;
+		justify-content: center;
 		overflow: visible;
+
+		&.sun {
+			accent-color: var(--gear-sun);
+		}
+		&.planet {
+			accent-color: var(--gear-planet);
+		}
+		&.ring {
+			accent-color: var(--gear-ring);
+		}
+
+		input[type='range'] {
+			writing-mode: vertical-lr;
+			direction: rtl;
+			width: 20px;
+			height: 200px; /* = sliderH in script */
+			margin: 0;
+			cursor: pointer;
+		}
 	}
 
-	.slider-wrapper input[type='range'] {
-		width: 100%;
-		accent-color: var(--color-primary);
-		margin: 0;
+	.ring-col .slider-wrapper input[type='range']:disabled {
+		accent-color: var(--gear-ring);
+		cursor: default;
+		opacity: 0.7;
 	}
 
 	.zero-indicator {
 		position: absolute;
-		left: calc((var(--zero-pct) * (220px - 20px) / 100) + 10px);
-		top: 50%;
+		top: calc(var(--zero-pct) * (200px - 20px) / 100 + 10px);
+		left: 50%;
 		transform: translateX(-50%) translateY(-50%);
-		width: 3px;
-		height: 18px;
+		width: 18px;
+		height: 3px;
 		background-color: var(--color-text-secondary);
 		opacity: 0.8;
 		pointer-events: none;
 		border-radius: 1px;
 		z-index: 10;
+	}
+
+	.thumb-connector {
+		position: absolute;
+		left: 0;
+		pointer-events: none;
+		z-index: 5;
+	}
+
+	.connector-line {
+		stroke: var(--color-text-secondary);
+		stroke-width: 2;
+		stroke-linecap: round;
+		opacity: 0.6;
+	}
+
+	.connector-line-ring {
+		stroke-dasharray: 4 3;
+		opacity: 0.35;
 	}
 
 	.hint {
