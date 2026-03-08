@@ -1,20 +1,20 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
-	import { theme } from '$lib/stores';
+	import { navbar } from '$lib/stores';
 	import ThemeToggle from './ThemeToggle.svelte';
 
 	let elapsed = $state(0);
-	let sidebarOpen = $state(false);
 
 	const navItems = [
 		{ href: '/', label: 'Accueil', icon: '🏠' },
-		{ href: '/gears-svg', label: 'Engrenages SVG', icon: '⚙️' },
-		{ href: '/gears-canvas', label: 'Engrenages Canvas', icon: '🎨' },
+		{ href: '/hybrid-diagrams', label: 'Diagrammes mécaniques', icon: '⚙️' },
+		{ href: '/img-convert', label: 'Conversion d\'images', icon: '🎨' },
 		{ href: '/game-of-life', label: 'Jeu de la vie', icon: '🧬' }
 	];
 
 	onMount(() => {
+		navbar.init();
 		const interval = setInterval(() => {
 			elapsed += 1;
 		}, 1000);
@@ -31,13 +31,20 @@
 	function isActive(href: string): boolean {
 		return page.url.pathname === href;
 	}
+
+	function onNavClick() {
+		// On mobile, close sidebar after navigating
+		if (window.innerWidth < 768) {
+			navbar.toggle();
+		}
+	}
 </script>
 
-<!-- Hamburger button (mobile) -->
+<!-- Hamburger tab (position:fixed, slides via translateX) -->
 <button
 	class="hamburger"
-	class:open={sidebarOpen}
-	onclick={() => (sidebarOpen = !sidebarOpen)}
+	class:open={navbar.isOpen}
+	onclick={() => navbar.toggle()}
 	aria-label="Menu"
 >
 	<span></span>
@@ -45,13 +52,13 @@
 	<span></span>
 </button>
 
-<!-- Sidebar overlay (mobile) -->
-{#if sidebarOpen}
-	<div class="overlay" onclick={() => (sidebarOpen = false)} role="presentation"></div>
+<!-- Sidebar overlay (mobile only) -->
+{#if navbar.isOpen}
+	<div class="overlay" onclick={() => navbar.toggle()} role="presentation"></div>
 {/if}
 
 <!-- Sidebar -->
-<nav class="sidebar" class:open={sidebarOpen}>
+<nav class="sidebar" class:open={navbar.isOpen}>
 	<div class="sidebar-header">
 		<span class="logo">F12</span>
 	</div>
@@ -62,7 +69,7 @@
 				<a
 					href={item.href}
 					class:active={isActive(item.href)}
-					onclick={() => (sidebarOpen = false)}
+					onclick={onNavClick}
 				>
 					<span class="nav-icon">{item.icon}</span>
 					<span class="nav-label">{item.label}</span>
@@ -83,39 +90,65 @@
 		position: fixed;
 		top: 0;
 		left: 0;
-		width: 220px;
+		width: 320px;
 		height: 100vh;
 		background: var(--color-surface);
-		border-right: 1px solid var(--color-border);
+		border-right: 3px solid var(--color-border);
 		display: flex;
 		flex-direction: column;
 		z-index: 100;
+		transform: translateX(-100%);
 		transition: transform 0.3s ease, background-color 0.3s ease;
 	}
 
+	.sidebar.open {
+		transform: translateX(0);
+	}
+
 	.sidebar-header {
-		padding: 1.5rem 1.25rem 1rem;
-		border-bottom: 1px solid var(--color-border);
+		padding: 2rem 1.5rem 8rem 2rem;
+		position: relative;
+		height: 6rem;
+		background-image: linear-gradient(
+			to right,
+			var(--header-gradient-from) 0%,
+			var(--header-gradient-to) 100%
+		);
+		transition: background-image 0.3s ease;
+
+		&::after {
+			content: '';
+			position: absolute;
+			left: 0;
+			top: 6rem;
+			width: 100%;
+			height: 4rem;
+			background-color: var(--color-surface);
+			-webkit-mask-image: linear-gradient(to bottom, transparent, black);
+			mask-image: linear-gradient(to bottom, transparent, black);
+			transition: background-color 0.3s ease;
+		}
 	}
 
 	.logo {
-		font-size: 1.6rem;
+		font-size: 2.5rem;
 		font-weight: 800;
-		font-family: monospace;
+		font-family: 'Fredoka', 'Baloo 2', 'Nunito', system-ui, sans-serif;
 		color: var(--color-primary);
+		letter-spacing: 0.05em;
 	}
 
 	.nav-list {
 		list-style: none;
-		padding: 0.75rem 0;
+		padding: 1rem 0;
 		flex: 1;
 	}
 
 	.nav-list li a {
 		display: flex;
 		align-items: center;
-		gap: 0.75rem;
-		padding: 0.65rem 1.25rem;
+		gap: 0.85rem;
+		padding: 0.8rem 1.5rem;
 		text-decoration: none;
 		color: var(--color-text-secondary);
 		font-size: 0.95rem;
@@ -143,7 +176,7 @@
 
 	.sidebar-footer {
 		padding: 1rem 1.25rem;
-		border-top: 1px solid var(--color-border);
+		border-top: 3px solid var(--color-border);
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -153,7 +186,7 @@
 	.timer {
 		background: var(--color-bg-secondary);
 		color: var(--color-text);
-		border: 1px solid var(--color-border);
+		border: 3px solid var(--color-border);
 		padding: 0.3rem 0.75rem;
 		border-radius: 20px;
 		font-size: 0.85rem;
@@ -161,63 +194,65 @@
 		transition: background-color 0.3s, color 0.3s;
 	}
 
-	/* --- Hamburger (hidden on desktop) ---------- */
+	/* --- Hamburger tab (position:fixed, slides with sidebar) --- */
 	.hamburger {
-		display: none;
+		display: flex;
 		position: fixed;
-		top: 1rem;
-		left: 1rem;
-		z-index: 200;
-		background: var(--color-surface);
-		border: 1px solid var(--color-border);
-		border-radius: 8px;
-		width: 2.5rem;
-		height: 2.5rem;
+		top: 2rem;
+		left: 0;
+		width: 4rem;
+		height: 4rem;
+		background: var(--color-bg);
+		border: 3px solid var(--color-border);
+		border-left: none;
+		border-radius: 0 8px 8px 0;
 		cursor: pointer;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
 		gap: 4px;
 		padding: 0;
+		z-index: 200;
+		transform: translateX(0);
+		transition: background-color 0.3s ease, transform 0.3s ease;
+	}
+
+	/* open: button right edge = sidebar right edge, flip horizontally */
+	.hamburger.open {
+		transform: translateX(calc(320px - 3.5rem)) scale(-1, 1);
 	}
 
 	.hamburger span {
 		display: block;
-		width: 18px;
-		height: 2px;
-		background: var(--color-text);
-		border-radius: 2px;
+		width: 22px;
+		height: 3px;
+		background: var(--color-text-secondary);
+		border-radius: 999px;
 		transition: all 0.25s ease;
 	}
 
+	/* burger → left arrow chevron (scale(-1,1) on parent flips > to <) */
 	.hamburger.open span:nth-child(1) {
-		transform: rotate(45deg) translate(4px, 4px);
+		width: 13px;
+		transform: rotate(35deg) translate(3px, 2px);
 	}
 	.hamburger.open span:nth-child(2) {
-		opacity: 0;
+		width: 14px;
+    	transform: translate(-11px, 0px);
 	}
 	.hamburger.open span:nth-child(3) {
-		transform: rotate(-45deg) translate(4px, -4px);
+		width: 13px;
+		transform: rotate(-35deg) translate(3px, -2px);
 	}
 
+	/* --- Overlay (mobile only) ------------------ */
 	.overlay {
-		display: none;
+		width: 13px;
+		transform: rotate(-35deg) translate(3px, -3px);
 	}
 
 	/* --- Mobile --------------------------------- */
 	@media (max-width: 768px) {
-		.hamburger {
-			display: flex;
-		}
-
-		.sidebar {
-			transform: translateX(-100%);
-		}
-
-		.sidebar.open {
-			transform: translateX(0);
-		}
-
 		.overlay {
 			display: block;
 			position: fixed;

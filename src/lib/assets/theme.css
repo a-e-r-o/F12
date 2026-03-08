@@ -14,16 +14,18 @@
 	--color-surface: #ffffff;
 	--color-text: #1a1a2e;
 	--color-text-secondary: #555566;
-	--color-primary: #ff3e00;
-	--color-primary-hover: #cc3200;
+	--color-primary: #00c9a7;
+	--color-primary-hover: #00a88f;
 	--color-border: #e0e0e0;
 	--color-shadow: rgba(0, 0, 0, 0.08);
 	--indicator-fill: #1a1a2e;
-	--gear-sun: #2dd36f; /* Adjusted to a more vibrant green */
-	--gear-planet: #05a6b8; /* Adjusted to a slightly greener and less saturated blue */
-	--gear-ring: #f7b500; /* Adjusted to a less orange yellow */
+	--gear-sun: #2dd36f;
+	--gear-planet: #05a6b8;
+	--gear-ring: #f7b500;
 	--gear-carrier: #05a6b8;
 	--indicator-carrier: #1a1a2e;
+	--header-gradient-from: rgba(0, 201, 167, 0.35);
+	--header-gradient-to: rgba(20, 113, 242, 0.35);
 }
 
 /* --- Dark theme ---------------------------------------- */
@@ -33,16 +35,18 @@
 	--color-surface: #1e1e32;
 	--color-text: #e8e8f0;
 	--color-text-secondary: #9999aa;
-	--color-primary: #ff6b3d;
-	--color-primary-hover: #ff8a5c;
+	--color-primary: #56e8c9;
+	--color-primary-hover: #7af0d8;
 	--color-border: #2a2a40;
 	--color-shadow: rgba(0, 0, 0, 0.3);
 	--indicator-fill: #ffffff;
-	--gear-sun: #2dd36f; /* Adjusted to a more vibrant green */
-	--gear-planet: #05a6b8; /* Adjusted to a slightly greener and less saturated blue */
-	--gear-ring: #f7b500; /* Adjusted to a less orange yellow */
+	--gear-sun: #2dd36f;
+	--gear-planet: #05a6b8;
+	--gear-ring: #f7b500;
 	--gear-carrier: #05a6b8;
 	--indicator-carrier: #ffffff;
+	--header-gradient-from: rgba(86, 232, 201, 0.2);
+	--header-gradient-to: rgba(100, 140, 255, 0.2);
 }
 
 /* --- Base reset & global styles ------------------------ */

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.svg';
 	import '$lib/assets/theme.css';
-	import { theme } from '$lib/stores';
+	import { theme, navbar } from '$lib/stores';
 	import { FpsCounter, Navbar } from '$lib/components';
 	import { onMount } from 'svelte';
 
@@ -19,7 +19,7 @@
 <Navbar />
 
 <!-- Main content -->
-<main class="content">
+<main class="content" class:sidebar-open={navbar.isOpen}>
 	{@render children()}
 </main>
 
@@ -27,14 +27,14 @@
 
 <style>
 	.content {
-		margin-left: 220px;
+		margin-left: 0;
 		min-height: 100vh;
 		transition: margin-left 0.3s ease;
 	}
 
-	@media (max-width: 768px) {
-		.content {
-			margin-left: 0;
+	@media (min-width: 769px) {
+		.content.sidebar-open {
+			margin-left: 320px;
 		}
 	}
 </style>

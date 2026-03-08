@@ -248,6 +248,71 @@
 	let sunThumbY = $derived((sunMax - speed) / (sunMax - sunMin) * trackH + thumbR);
 	let carrierThumbY = $derived((carrierMax - carrierSpeed) / (carrierMax - carrierMin) * trackH + thumbR);
 	let ringThumbY = $derived((ringDisplayMax - ringSpeedClamped) / (ringDisplayMax - ringDisplayMin) * trackH + thumbR);
+
+	// --- Tooltip / popup -----------------------
+	type GearId = 'sun' | 'carrier' | 'ring';
+	let hoveredGear = $state<GearId | null>(null);
+	let touchMode = false;
+	let isTouchDevice = false;
+	let popupEl = $state<HTMLDivElement | null>(null);
+
+	$effect(() => {
+		if (!popupEl) return;
+		const rect = popupEl.getBoundingClientRect();
+		const style = getComputedStyle(popupEl);
+		const borderRight = parseFloat(style.borderRightWidth);
+		const remPx = parseFloat(getComputedStyle(document.documentElement).fontSize);
+		const overflow = rect.right + borderRight - window.innerWidth + remPx;
+		popupEl.style.left = overflow > 0
+			? `calc(100% - 0.5rem - ${overflow}px)`
+			: '';
+	});
+
+	const gearInfo: Record<GearId, { title: string; color: string; body: string, note?: string }> = {
+		sun: {
+			title: 'MG1 — Planétaire (soleil)',
+			color: 'var(--gear-sun)',
+			body: 'Petit moteur électrique, moins puissant que <span class="highlight ring">MG2</span>. Il permet de faire varier le rapport de transmission entre <span class="highlight planet">ICE</span> et <span class="highlight ring">MG2</span> en faisant tourner l\'engrenage central dans un sens pour avoir un rôle de réducteur ou dans l\'autre pour avoir un rôle de démultiplicateur.',
+			note: `Il peut servir de générateur dans les phases de décélération ou quand la batterie a besoin d'être chargée. Il sert aussi à démarrer le moteur thermique.`
+		},
+		carrier: {
+			title: 'ICE — Porte-satellite',
+			color: 'var(--gear-planet)',
+			body: 'Moteur thermique. À basse vitesse : quand la batterie est pleine il est à l\'arrêt, quand la batterie est vide il propulse tout seul la voiture. À haute vitesse : il est assisté par <span class="highlight ring">MG2</span> pour propulser la voiture.',
+			note: 'Ce qui importe est la vitesse de rotation de <span class="highlight planet">l\'ensemble</span> autour de <span class="highlight sun">l\'engrenage central</span> et non pas la vitesse de rotation de chaque engrenage sur lui-même.'
+		},
+		ring: {
+			title: 'MG2 — Couronne',
+			color: 'var(--gear-ring)',
+			body: 'Second moteur électrique, plus puissant que <span class="highlight sun">MG1</span>. Il est connecté aux roues via une chaîne de transmission et un différentiel.',
+			note: 'À basse vitesse il propulse tout seul la voiture, à haute vitesse il est assisté par <span class="highlight planet">ICE</span>. Durant les phases de décélération il peut faire du freinage régénératif pour recharger la batterie.'
+		}
+	};
+
+	let leaveTimer: ReturnType<typeof setTimeout> | null = null;
+
+	function onGearEnter(gear: GearId) {
+		if (leaveTimer) { clearTimeout(leaveTimer); leaveTimer = null; }
+		if (!isTouchDevice && !touchMode) hoveredGear = gear;
+	}
+	function onGearLeave(_gear: GearId) {
+		if (isTouchDevice || touchMode) return;
+		leaveTimer = setTimeout(() => { hoveredGear = null; leaveTimer = null; }, 80);
+	}
+	function onGearClick(gear: GearId, e: MouseEvent) {
+		e.stopPropagation();
+		if (!isTouchDevice) touchMode = true;
+		hoveredGear = hoveredGear === gear ? null : gear;
+	}
+
+	onMount(() => {
+		isTouchDevice = navigator.maxTouchPoints > 0 || 'ontouchstart' in window;
+		function onDocClick() { hoveredGear = null; touchMode = false; }
+		document.addEventListener('click', onDocClick);
+		return () => document.removeEventListener('click', onDocClick);
+	});
+	let svgShownExplanations = $state(false);
+
 </script>
 
 <div class="gears-svg">
@@ -269,7 +334,7 @@
 					<input type="range" bind:value={carrierSpeed} min={carrierMin} max={carrierMax} step="0.1" />
 					<div class="zero-indicator"></div>
 				</div>
-				<strong>{carrierSpeed.toFixed(1)}</strong>
+				<strong>{carrierSpeed*1000}</strong>
 			</div>
 			<!-- Soleil -->
 			<div class="slider-col">
@@ -287,16 +352,24 @@
 					<input type="range" disabled value={ringSpeedClamped} min={ringDisplayMin} max={ringDisplayMax} step="0.1" />
 					<div class="zero-indicator"></div>
 				</div>
-				<strong>{ringSpeed.toFixed(2)}</strong>
+				<strong>{Math.round(ringSpeedClamped * 1000)}</strong>
 			</div>
 		</div>
 		<p class="hint">Valeurs négatives = rotation inversée</p>
 	</div>
 	
-	<svg class="gear-diagram" viewBox="0 0 {svgSize} {svgSize}" width={svgSize} height={svgSize}>
-		<!-- Ring gear (drawn first, behind everything) -->
-		<g transform="translate({cx}, {cy}) rotate({ringAngle})">
+	<div class="diagram-area">
+		<svg class="gear-diagram" viewBox="0 0 {svgSize} {svgSize}" width={svgSize} height={svgSize}>
+		<!-- Ring gear -->
+		<g transform="translate({cx}, {cy}) rotate({ringAngle})"
+			class="gear-interactive" class:gear-highlighted={hoveredGear === 'ring'}
+			onmouseenter={() => onGearEnter('ring')}
+			onmouseleave={() => onGearLeave('ring')}
+			onclick={(e) => onGearClick('ring', e)}
+			onkeydown={(e) => e.key === 'Enter' && onGearClick('ring', e as unknown as MouseEvent)}
+			role="button" tabindex="0" aria-label="MG2 — Couronne">
 			<path d={ringPath} class="gear ring" fill-rule="evenodd" />
+			<circle r={ringOuterR} fill="transparent" />
 			<g transform="rotate({ringGapAngle})">
 				<rect
 					x={-ringBarW / 2}
@@ -309,8 +382,15 @@
 		</g>
 		
 		<!-- Carrier (porte-satellite) -->
-		<g transform="translate({cx}, {cy}) rotate({carrierAngle})">
+		<g transform="translate({cx}, {cy}) rotate({carrierAngle})"
+			class="gear-interactive" class:gear-highlighted={hoveredGear === 'carrier'}
+			onmouseenter={() => onGearEnter('carrier')}
+			onmouseleave={() => onGearLeave('carrier')}
+			onclick={(e) => onGearClick('carrier', e)}
+			onkeydown={(e) => e.key === 'Enter' && onGearClick('carrier', e as unknown as MouseEvent)}
+			role="button" tabindex="0" aria-label="ICE — Porte-satellite">
 			<path d={carrierAnnulusPath} class="gear carrier" fill-rule="evenodd" />
+			<circle r={carrierOuterR} fill="transparent" />
 			<!-- Indicator placed at 45° = midway between planet 0 (0°) and planet 1 (90°) -->
 			<g transform="rotate(45)">
 				<rect
@@ -323,13 +403,20 @@
 			</g>
 		</g>
 		
-		<!-- Planets -->
+		<!-- Planets (part of ICE / carrier) -->
 		{#each planetAngles as φ, i}
 		{@const rad = ((φ + carrierAngle) * Math.PI) / 180}
 		{@const px = cx + centerDist * Math.cos(rad)}
 		{@const py = cy + centerDist * Math.sin(rad)}
-		<g transform="translate({px}, {py}) rotate({planetRotations[i]})">
+		<g transform="translate({px}, {py}) rotate({planetRotations[i]})"
+			class="gear-interactive" class:gear-highlighted={hoveredGear === 'carrier'}
+			onmouseenter={() => onGearEnter('carrier')}
+			onmouseleave={() => onGearLeave('carrier')}
+			onclick={(e) => onGearClick('carrier', e)}
+			onkeydown={(e) => e.key === 'Enter' && onGearClick('carrier', e as unknown as MouseEvent)}
+			role="button" tabindex="-1" aria-label="Planète — ICE">
 			<path d={planetPath} class="gear planet" />
+			<circle r={RaPlanet} fill="transparent" />
 			<circle r={planetHub} class="hub" />
 			<g transform="rotate({planetGapAngle})">
 				<rect
@@ -344,8 +431,15 @@
 			{/each}
 			
 			<!-- Sun gear (center) -->
-			<g transform="translate({cx}, {cy}) rotate({sunAngle})">
+			<g transform="translate({cx}, {cy}) rotate({sunAngle})"
+				class="gear-interactive" class:gear-highlighted={hoveredGear === 'sun'}
+				onmouseenter={() => onGearEnter('sun')}
+				onmouseleave={() => onGearLeave('sun')}
+				onclick={(e) => onGearClick('sun', e)}
+				onkeydown={(e) => e.key === 'Enter' && onGearClick('sun', e as unknown as MouseEvent)}
+				role="button" tabindex="0" aria-label="MG1 — Planétaire">
 				<path d={sunPath} class="gear sun" />
+				<circle r={RaSun} fill="transparent" />
 				<circle r={sunHub} class="hub" />
 				<g transform="rotate({sunGapAngle})">
 					<rect
@@ -358,6 +452,35 @@
 			</g>
 		</g>
 	</svg>
+		{#if hoveredGear}
+			<div class="gear-popup" bind:this={popupEl} style="--popup-color: {gearInfo[hoveredGear].color}">
+				<strong>{gearInfo[hoveredGear].title}</strong>
+				<p>{@html gearInfo[hoveredGear].body}</p>
+				{#if gearInfo[hoveredGear].note}
+					<p class="note">{@html gearInfo[hoveredGear].note}</p>
+				{/if}
+			</div>
+		{/if}
+	</div>
+</div>
+
+<div class="explanations-wrapper">
+	<button class="toggle-explanations" onclick={() => svgShownExplanations = !svgShownExplanations}>
+		{svgShownExplanations ? '▲' : '▼'} Afficher les explications
+	</button>
+	{#if svgShownExplanations}
+		<div class="explanations">
+			{#each (['carrier', 'sun', 'ring'] as const) as gear}
+				<div class="explanation-card" style="--popup-color: {gearInfo[gear].color}">
+					<strong>{gearInfo[gear].title}</strong>
+					<p>{@html gearInfo[gear].body}</p>
+					{#if gearInfo[gear].note}
+						<p class="note">{@html gearInfo[gear].note}</p>
+					{/if}
+				</div>
+			{/each}
+		</div>
+	{/if}
 </div>
 
 <style>
@@ -366,17 +489,23 @@
 	.gears-svg {
 		display: flex;
 		flex-direction: row;
-		align-items: center;
+		align-items: flex-start;
 		gap: 1.5rem;
 		padding: 2rem 1rem;
 	}
 
 	/* --- SVG diagram and indicators ----------- */
 
+	.diagram-area {
+		position: relative;
+		flex-shrink: 0;
+		width: fit-content;
+	}
+
 	.gear-diagram {
 		max-width: 100%;
 		height: auto;
-		flex-shrink: 0;
+		display: block;
 	}
 
 	.gear {
@@ -531,5 +660,134 @@
 	.hint {
 		font-size: 0.8rem;
 		color: var(--color-text-secondary);
+	}
+
+	/* --- Gear popup / tooltip ----------------- */
+
+	.gear-interactive {
+		cursor: pointer;
+	}
+
+	.gear-highlighted path,
+	.gear-highlighted circle:not([fill='transparent']) {
+		filter: brightness(1.15);
+	}
+
+	.gear-popup {
+		position: absolute;
+		top: 1rem;
+		left: calc(100% + 0.75rem);
+		width: 260px;
+		padding: 1rem;
+		background: var(--color-surface);
+		border: 2px solid var(--popup-color);
+		border-radius: 0.75rem;
+		box-shadow: 0 4px 20px var(--color-shadow);
+		color: var(--color-text);
+		animation: popup-in 0.15s ease;
+		z-index: 20;
+		pointer-events: none;
+	}
+
+	@media (max-width: 900px) {
+		.gear-popup {
+			position: static;
+			width: auto;
+			margin-top: 0.75rem;
+			align-self: stretch;
+		}
+		.diagram-area {
+			display: flex;
+			flex-direction: column;
+		}
+	}
+
+	.gear-popup strong,
+	.explanation-card strong {
+		display: block;
+		margin-bottom: 0.5rem;
+		font-size: 0.95rem;
+		color: var(--popup-color);
+	}
+
+	.gear-popup p,
+	.explanation-card p {
+		font-size: 0.82rem;
+		line-height: 1.5;
+		color: var(--color-text-secondary);
+		margin: 0 0 0.4rem;
+	}
+
+	.note {
+		font-size: 0.78rem;
+		color: var(--color-text-secondary);
+		opacity: 0.8;
+		font-style: italic;
+	}
+
+	:global(.highlight) {
+		font-weight: bold;
+		&:global(.sun) { color: var(--gear-sun); }
+		&:global(.planet) { color: var(--gear-planet); }
+		&:global(.ring) { color: var(--gear-ring); }
+	}
+
+	@keyframes popup-in {
+		from { opacity: 0; transform: translateY(6px); }
+		to   { opacity: 1; transform: translateY(0); }
+	}
+
+	/* --- Collapsible explanations ------------- */
+
+	.explanations-wrapper {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+		padding: 0 1rem 2rem;
+	}
+
+	.toggle-explanations {
+		background: none;
+		border: none;
+		cursor: pointer;
+		font-size: 0.78rem;
+		color: var(--color-text-secondary);
+		opacity: 0.7;
+		padding: 0.25rem 0.5rem;
+		border-radius: 0.25rem;
+		transition: opacity 0.15s;
+		&:hover { opacity: 1; }
+	}
+
+	.explanations {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem;
+		justify-content: center;
+		max-width: 860px;
+	}
+
+	.explanation-card {
+		width: 260px;
+		padding: 1rem;
+		background: var(--color-surface);
+		border-left: 3px solid var(--popup-color);
+		border-radius: 0.5rem;
+		box-shadow: 0 2px 10px var(--color-shadow);
+	}
+
+	.explanation-card strong {
+		display: block;
+		margin-bottom: 0.4rem;
+		font-size: 0.9rem;
+		color: var(--popup-color);
+	}
+
+	.explanation-card p {
+		font-size: 0.8rem;
+		line-height: 1.5;
+		color: var(--color-text-secondary);
+		margin: 0;
 	}
 </style>
