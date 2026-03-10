@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { gears, sunMin, sunMax, carrierMin, carrierMax, RPM_FACTOR } from '$lib/stores';
 
-	let speed = $state(1);
-	let carrierSpeed = $state(0);
 	let sunAngle = $state(0);
 	let carrierAngle = $state(0);
 	let animationId: number;
@@ -209,8 +208,8 @@
 		function frame(now: number) {
 			const dt = (now - last) / 1000;
 			last = now;
-			sunAngle += speed * 60 * dt;
-			carrierAngle += carrierSpeed * 60 * dt;
+			sunAngle += gears.sunSpeed * 60 * dt;
+			carrierAngle += gears.carrierSpeed * 60 * dt;
 			animationId = requestAnimationFrame(frame);
 		}
 		animationId = requestAnimationFrame(frame);
@@ -224,13 +223,10 @@
 	let ringAngle = $derived(carrierAngle * (1 + ratioSunRing) - sunAngle * ratioSunRing + ringMeshOffset);
 
 	// --- Slider display limits ---
-	const sunMin = -6.5, sunMax = 6.5;
-	const carrierMin = 0, carrierMax = 4.5;
-	const ringDisplayMin = -2.5, ringDisplayMax = 9;
+	const ringMin = -2.5, ringMax = 15;
 
-	// Ring speed from Willis formula applied to velocities
-	let ringSpeed = $derived(carrierSpeed * (1 + ratioSunRing) - speed * ratioSunRing);
-	let ringSpeedClamped = $derived(Math.max(ringDisplayMin, Math.min(ringDisplayMax, ringSpeed)));
+	// Ring speed from store (derived)
+	let ringSpeed = $derived(gears.ringSpeed);
 
 	// Connector line / slider layout — must match CSS pixel values
 	const sliderH = 200;
@@ -245,9 +241,9 @@
 	const ring_x = 2 * (colW + colGap) + colW / 2;
 
 	// Thumb Y positions for connector line (from top of slider, in px)
-	let sunThumbY = $derived((sunMax - speed) / (sunMax - sunMin) * trackH + thumbR);
-	let carrierThumbY = $derived((carrierMax - carrierSpeed) / (carrierMax - carrierMin) * trackH + thumbR);
-	let ringThumbY = $derived((ringDisplayMax - ringSpeedClamped) / (ringDisplayMax - ringDisplayMin) * trackH + thumbR);
+	let sunThumbY = $derived((sunMax - gears.sunSpeed) / (sunMax - sunMin) * trackH + thumbR);
+	let carrierThumbY = $derived((carrierMax - gears.carrierSpeed) / (carrierMax - carrierMin) * trackH + thumbR);
+	let ringThumbY = $derived((ringMax - ringSpeed) / (ringMax - ringMin) * trackH + thumbR);
 
 	// --- Tooltip / popup -----------------------
 	type GearId = 'sun' | 'carrier' | 'ring';
@@ -255,17 +251,24 @@
 	let touchMode = false;
 	let isTouchDevice = false;
 	let popupEl = $state<HTMLDivElement | null>(null);
+	let diagramEl = $state<HTMLDivElement | null>(null);
 
 	$effect(() => {
-		if (!popupEl) return;
-		const rect = popupEl.getBoundingClientRect();
-		const style = getComputedStyle(popupEl);
-		const borderRight = parseFloat(style.borderRightWidth);
+		if (!popupEl || !diagramEl) return;
+		const parentRect = diagramEl.getBoundingClientRect();
 		const remPx = parseFloat(getComputedStyle(document.documentElement).fontSize);
-		const overflow = rect.right + borderRight - window.innerWidth + remPx;
-		popupEl.style.left = overflow > 0
-			? `calc(100% - 0.5rem - ${overflow}px)`
-			: '';
+		const gapPx = remPx * 0.75; // 0.75rem gap between diagram edge and popup
+		const popupW = popupEl.offsetWidth;
+		const borderRight = parseFloat(getComputedStyle(popupEl).borderRightWidth);
+		const availableRight = window.innerWidth - remPx - parentRect.right;
+
+		if (availableRight >= popupW + borderRight + gapPx) {
+			popupEl.style.left = `${parentRect.width + gapPx}px`;
+			popupEl.style.top = '1rem';
+		} else {
+			popupEl.style.left = '0px';
+			popupEl.style.top = `${parentRect.height + gapPx}px`;
+		}
 	});
 
 	const gearInfo: Record<GearId, { title: string; color: string; body: string, note?: string }> = {
@@ -331,34 +334,34 @@
 			<div class="slider-col">
 				<span class="slider-label">ICE</span>
 				<div class="slider-wrapper planet" style="--zero-pct: {carrierMax / (carrierMax - carrierMin) * 100}">
-					<input type="range" bind:value={carrierSpeed} min={carrierMin} max={carrierMax} step="0.1" />
+					<input type="range" bind:value={gears.carrierSpeed} min={carrierMin} max={carrierMax} step="0.1" />
 					<div class="zero-indicator"></div>
 				</div>
-				<strong>{carrierSpeed*1000}</strong>
+				<strong>{gears.carrierSpeed * RPM_FACTOR}</strong>
 			</div>
 			<!-- Soleil -->
 			<div class="slider-col">
 				<span class="slider-label">MG1</span>
 				<div class="slider-wrapper sun" style="--zero-pct: {sunMax / (sunMax - sunMin) * 100}">
-					<input type="range" bind:value={speed} min={sunMin} max={sunMax} step="0.1" />
+					<input type="range" bind:value={gears.sunSpeed} min={sunMin} max={sunMax} step="0.1" />
 					<div class="zero-indicator"></div>
 				</div>
-				<strong>{speed*1000}</strong>
+				<strong>{gears.sunSpeed * RPM_FACTOR}</strong>
 			</div>
 			<!-- Couronne (lecture seule) -->
 			<div class="slider-col ring-col">
 				<span class="slider-label">MG2</span>
-				<div class="slider-wrapper ring" style="--zero-pct: {ringDisplayMax / (ringDisplayMax - ringDisplayMin) * 100}">
-					<input type="range" disabled value={ringSpeedClamped} min={ringDisplayMin} max={ringDisplayMax} step="0.1" />
+				<div class="slider-wrapper ring" style="--zero-pct: {ringMax / (ringMax - ringMin) * 100}">
+					<input type="range" disabled value={ringSpeed} min={ringMin} max={ringMax} step="0.1" />
 					<div class="zero-indicator"></div>
 				</div>
-				<strong>{Math.round(ringSpeedClamped * 1000)}</strong>
+				<strong>{Math.round(ringSpeed * RPM_FACTOR)}</strong>
 			</div>
 		</div>
 		<p class="hint">Valeurs négatives = rotation inversée</p>
 	</div>
 	
-	<div class="diagram-area">
+	<div class="diagram-area" bind:this={diagramEl}>
 		<svg class="gear-diagram" viewBox="0 0 {svgSize} {svgSize}" width={svgSize} height={svgSize}>
 		<!-- Ring gear -->
 		<g transform="translate({cx}, {cy}) rotate({ringAngle})"
@@ -676,7 +679,7 @@
 	.gear-popup {
 		position: absolute;
 		top: 1rem;
-		left: calc(100% + 0.75rem);
+		left: 0; /* overridden immediately by JS $effect */
 		width: 260px;
 		padding: 1rem;
 		background: var(--color-surface);

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import GearsSvg from '$lib/components/GearsSvg.svelte';
-	import lexusGauge from '$lib/assets/lexus-is-300h-f-gauge.jpg';
+	import GaugeCanvas from '$lib/components/GaugeCanvas.svelte';
 </script>
 
 
@@ -9,7 +9,7 @@
 
 	<GearsSvg />
 
-	<img src="{lexusGauge}" alt="Lexus IS 300h F-Gauge" height="300" />
+	<GaugeCanvas />
 </div>
 
 
