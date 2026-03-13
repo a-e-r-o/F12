@@ -1,0 +1,79 @@
+{
+	"nav": {
+		"home": "Accueil",
+		"hybridDiagrams": "Diagrammes mécaniques",
+		"imgConvert": "Conversion d'images",
+		"gameOfLife": "Jeu de la vie",
+		"converters": "Convertisseurs d'unités"
+	},
+	"home": {
+		"welcome": "Bienvenue sur F12",
+		"subtitle": "Boîte à outils interactive",
+		"cardHybrid": "Visualisation SVG interactive d'un train épicycloïdal Toyota / Lexus avec sliders et explications.",
+		"cardImg": "Conversion et manipulation d'images directement dans le navigateur.",
+		"cardLife": "Simulation du célèbre automate cellulaire de John Conway.",
+		"cardConverters": "Convertisseurs MPG ↔ L/100km et prix de carburant EUR ↔ USD.",
+		"cardGears": "Rendu canvas d'un système d'engrenages avec contrôle de vitesse."
+	},
+	"pageTitle": {
+		"home": "F12 — Accueil",
+		"hybridDiagrams": "F12 — Diagrammes mécaniques",
+		"imgConvert": "F12 — Conversion d'images",
+		"gameOfLife": "F12 — Jeu de la vie",
+		"converters": "F12 — Convertisseurs",
+		"gearsCanvas": "F12 — Engrenages Canvas"
+	},
+	"footer": {
+		"builtWith": "Construit avec SvelteKit & Svelte 5"
+	},
+	"theme": {
+		"toggleTitle": "Basculer le thème",
+		"toggleAria": "Basculer le thème {theme}",
+		"light": "clair",
+		"dark": "sombre"
+	},
+	"converters": {
+		"title": "Convertisseurs d'unités",
+		"consumption": "Consommation",
+		"mpg": "Miles per gallon",
+		"lper100": "Litres / 100 km",
+		"mpgPlaceholder": "ex : 30",
+		"lper100Placeholder": "ex : 7,8",
+		"fuelPrice": "Prix du carburant",
+		"eurPerLiter": "€ / litre",
+		"usdPerGallon": "$ / gallon",
+		"eurPlaceholder": "ex : 1,85",
+		"usdPlaceholder": "ex : 3,50",
+		"rateError": "Impossible de charger le taux de change.",
+		"rateLoading": "Chargement du taux de change…",
+		"exchangeRate": "Taux EUR → USD : {rate}"
+	},
+	"gearsCanvas": {
+		"title": "Engrenages — Approche Canvas",
+		"leftGear": "Engrenage gauche (entraîné)",
+		"rightGear": "Engrenage droit (moteur)",
+		"speed": "Vitesse : {value}",
+		"negativeHint": "Valeurs négatives = rotation inversée"
+	},
+	"gearsSvg": {
+		"title": "Train Épicycloïdal — SVG",
+		"showExplanations": "Afficher les explications",
+		"negativeHint": "Valeurs négatives = rotation inversée",
+		"sunTitle": "MG1 — Planétaire (soleil)",
+		"sunAria": "MG1 — Planétaire",
+		"sunBody": "Petit moteur électrique, moins puissant que <span class=\"highlight ring\">MG2</span>. Il permet de faire varier le rapport de transmission entre <span class=\"highlight planet\">ICE</span> et <span class=\"highlight ring\">MG2</span> en faisant tourner l'engrenage central dans un sens pour avoir un rôle de réducteur ou dans l'autre pour avoir un rôle de démultiplicateur.",
+		"sunNote": "Il peut servir de générateur dans les phases de décélération ou quand la batterie a besoin d'être chargée. Il sert aussi à démarrer le moteur thermique.",
+		"carrierTitle": "ICE — Porte-satellite",
+		"carrierAria": "ICE — Porte-satellite",
+		"carrierBody": "Moteur thermique. À basse vitesse : quand la batterie est pleine il est à l'arrêt, quand la batterie est vide il propulse tout seul la voiture. À haute vitesse : il est assisté par <span class=\"highlight ring\">MG2</span> pour propulser la voiture.",
+		"carrierNote": "Ce qui importe est la vitesse de rotation de <span class=\"highlight planet\">l'ensemble</span> autour de <span class=\"highlight sun\">l'engrenage central</span> et non pas la vitesse de rotation de chaque engrenage sur lui-même.",
+		"ringTitle": "MG2 — Couronne",
+		"ringAria": "MG2 — Couronne",
+		"ringBody": "Second moteur électrique, plus puissant que <span class=\"highlight sun\">MG1</span>. Il est connecté aux roues via une chaîne de transmission et un différentiel.",
+		"ringNote": "À basse vitesse il propulse tout seul la voiture, à haute vitesse il est assisté par <span class=\"highlight planet\">ICE</span>. Durant les phases de décélération il peut faire du freinage régénératif pour recharger la batterie.",
+		"planetAria": "Planète — ICE"
+	},
+	"lang": {
+		"switchLabel": "Langue"
+	}
+}

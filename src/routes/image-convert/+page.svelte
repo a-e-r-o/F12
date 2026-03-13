@@ -3,7 +3,7 @@
 </script>
 
 <svelte:head>
-	<title>{i18n.t('pageTitle.gameOfLife')}</title>
+	<title>{i18n.t('pageTitle.imgConvert')}</title>
 </svelte:head>
 
 TODO

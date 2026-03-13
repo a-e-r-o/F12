@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { i18n } from '$lib/stores/i18n.svelte';
 
 	let speed = $state(1);
 	let canvas: HTMLCanvasElement;
@@ -134,8 +135,8 @@
 			ctx.fillStyle = c.textSecondary;
 			ctx.font = '14px system-ui, sans-serif';
 			ctx.textAlign = 'center';
-			ctx.fillText('Engrenage gauche (entraîné)', leftCx, leftCy + OUTER_R + 30);
-			ctx.fillText('Engrenage droit (moteur)', rightCx, rightCy + OUTER_R + 30);
+			ctx.fillText(i18n.t('gearsCanvas.leftGear'), leftCx, leftCy + OUTER_R + 30);
+			ctx.fillText(i18n.t('gearsCanvas.rightGear'), rightCx, rightCy + OUTER_R + 30);
 
 			animId = requestAnimationFrame(frame);
 		}
@@ -146,7 +147,7 @@
 </script>
 
 <div class="gears-canvas">
-	<h2>Engrenages — Approche Canvas</h2>
+	<h2>{i18n.t('gearsCanvas.title')}</h2>
 
 	<canvas
 		bind:this={canvas}
@@ -155,10 +156,10 @@
 
 	<div class="controls">
 		<label>
-			Vitesse : <strong>{speed.toFixed(1)}</strong>
+			{i18n.t('gearsCanvas.speed', { value: speed.toFixed(1) })}
 			<input type="range" bind:value={speed} min="-3" max="3" step="0.1" />
 		</label>
-		<p class="hint">Valeurs négatives = rotation inversée</p>
+		<p class="hint">{i18n.t('gearsCanvas.negativeHint')}</p>
 	</div>
 </div>
 

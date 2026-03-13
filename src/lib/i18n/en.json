@@ -1,0 +1,79 @@
+{
+	"nav": {
+		"home": "Home",
+		"hybridDiagrams": "Mechanical Diagrams",
+		"imgConvert": "Image Conversion",
+		"gameOfLife": "Game of Life",
+		"converters": "Unit converters"
+	},
+	"home": {
+		"welcome": "Welcome to F12",
+		"subtitle": "Interactive toolbox",
+		"cardHybrid": "Interactive SVG visualization of a Toyota / Lexus epicyclic gear train with sliders and explanations.",
+		"cardImg": "Image conversion and manipulation directly in the browser.",
+		"cardLife": "Simulation of John Conway's famous cellular automaton.",
+		"cardConverters": "MPG ↔ L/100km and EUR ↔ USD fuel price converters.",
+		"cardGears": "Canvas rendering of a gear system with speed control."
+	},
+	"pageTitle": {
+		"home": "F12 — Home",
+		"hybridDiagrams": "F12 — Mechanical Diagrams",
+		"imgConvert": "F12 — Image Conversion",
+		"gameOfLife": "F12 — Game of Life",
+		"converters": "F12 — Converters",
+		"gearsCanvas": "F12 — Gears Canvas"
+	},
+	"footer": {
+		"builtWith": "Built with SvelteKit & Svelte 5"
+	},
+	"theme": {
+		"toggleTitle": "Toggle theme",
+		"toggleAria": "Switch to {theme} theme",
+		"light": "light",
+		"dark": "dark"
+	},
+	"converters": {
+		"title": "Unit converters",
+		"consumption": "Fuel Consumption",
+		"mpg": "Miles per gallon",
+		"lper100": "Liters / 100 km",
+		"mpgPlaceholder": "e.g. 30",
+		"lper100Placeholder": "e.g. 7.8",
+		"fuelPrice": "Fuel Price",
+		"eurPerLiter": "€ / liter",
+		"usdPerGallon": "$ / gallon",
+		"eurPlaceholder": "e.g. 1.85",
+		"usdPlaceholder": "e.g. 3.50",
+		"rateError": "Unable to load exchange rate.",
+		"rateLoading": "Loading exchange rate…",
+		"exchangeRate": "EUR → USD rate: {rate}"
+	},
+	"gearsCanvas": {
+		"title": "Gears — Canvas Approach",
+		"leftGear": "Left gear (driven)",
+		"rightGear": "Right gear (driver)",
+		"speed": "Speed: {value}",
+		"negativeHint": "Negative values = reversed rotation"
+	},
+	"gearsSvg": {
+		"title": "Epicyclic Gear Train — SVG",
+		"showExplanations": "Show explanations",
+		"negativeHint": "Negative values = reversed rotation",
+		"sunTitle": "MG1 — Sun Gear",
+		"sunAria": "MG1 — Sun Gear",
+		"sunBody": "Small electric motor, less powerful than <span class=\"highlight ring\">MG2</span>. It allows varying the transmission ratio between <span class=\"highlight planet\">ICE</span> and <span class=\"highlight ring\">MG2</span> by spinning the central gear in one direction to act as a reducer or in the other to act as a multiplier.",
+		"sunNote": "It can serve as a generator during deceleration phases or when the battery needs charging. It also starts the combustion engine.",
+		"carrierTitle": "ICE — Planet Carrier",
+		"carrierAria": "ICE — Planet Carrier",
+		"carrierBody": "Combustion engine. At low speed: when the battery is full it is off, when the battery is empty it propels the car alone. At high speed: it is assisted by <span class=\"highlight ring\">MG2</span> to propel the car.",
+		"carrierNote": "What matters is the rotational speed of <span class=\"highlight planet\">the assembly</span> around <span class=\"highlight sun\">the central gear</span> and not the rotational speed of each gear on its own axis.",
+		"ringTitle": "MG2 — Ring Gear",
+		"ringAria": "MG2 — Ring Gear",
+		"ringBody": "Second electric motor, more powerful than <span class=\"highlight sun\">MG1</span>. It is connected to the wheels via a chain drive and a differential.",
+		"ringNote": "At low speed it propels the car alone, at high speed it is assisted by <span class=\"highlight planet\">ICE</span>. During deceleration phases it can perform regenerative braking to recharge the battery.",
+		"planetAria": "Planet — ICE"
+	},
+	"lang": {
+		"switchLabel": "Language"
+	}
+}

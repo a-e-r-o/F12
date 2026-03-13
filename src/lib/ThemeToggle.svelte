@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { theme } from '$lib/theme.svelte';
+	import { i18n } from '$lib/stores/i18n.svelte';
 </script>
 
 <button
 	class="theme-toggle"
 	onclick={() => theme.toggle()}
-	aria-label="Basculer le thème {theme.current === 'dark' ? 'clair' : 'sombre'}"
-	title="Basculer le thème"
+	aria-label={i18n.t('theme.toggleAria', { theme: i18n.t(theme.current === 'dark' ? 'theme.light' : 'theme.dark') })}
+	title={i18n.t('theme.toggleTitle')}
 >
 	{#if theme.current === 'dark'}
 		<span class="icon">☀️</span>

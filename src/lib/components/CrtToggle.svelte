@@ -1,23 +1,18 @@
 <script lang="ts">
-	import { theme } from '$lib/stores/theme.svelte';
-	import { i18n } from '$lib/stores/i18n.svelte';
+	import { crt } from '$lib/stores/crt.svelte';
 </script>
 
 <button
-	class="theme-toggle"
-	onclick={() => theme.toggle()}
-	aria-label={i18n.t('theme.toggleAria', { theme: i18n.t(theme.current === 'dark' ? 'theme.light' : 'theme.dark') })}
-	title={i18n.t('theme.toggleTitle')}
+	class="crt-toggle"
+	onclick={() => crt.toggle()}
+	aria-label={crt.enabled ? 'Disable CRT effects' : 'Enable CRT effects'}
+	title={crt.enabled ? 'Disable CRT effects' : 'Enable CRT effects'}
 >
-	{#if theme.current === 'dark'}
-		<span class="icon">☀️</span>
-	{:else}
-		<span class="icon">🌙</span>
-	{/if}
+	<span class="icon">{crt.enabled ? '📺' : '🖥️'}</span>
 </button>
 
 <style>
-	.theme-toggle {
+	.crt-toggle {
 		background: var(--glass-surface-strong);
 		border: 1px solid var(--ui-border);
 		border-radius: 50%;

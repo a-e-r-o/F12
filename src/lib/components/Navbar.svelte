@@ -2,16 +2,20 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import { navbar } from '$lib/stores';
+	import { i18n } from '$lib/stores/i18n.svelte';
 	import ThemeToggle from './ThemeToggle.svelte';
+	import LanguageSwitcher from './LanguageSwitcher.svelte';
+	import CrtToggle from './CrtToggle.svelte';
 
 	let elapsed = $state(0);
 
-	const navItems = [
-		{ href: '/', label: 'Accueil', icon: '🏠' },
-		{ href: '/hybrid-diagrams', label: 'Diagrammes mécaniques', icon: '⚙️' },
-		{ href: '/img-convert', label: 'Conversion d\'images', icon: '🎨' },
-		{ href: '/game-of-life', label: 'Jeu de la vie', icon: '🧬' }
-	];
+	let navItems = $derived([
+		{ href: '/', label: i18n.t('nav.home'), icon: '🏠' },
+		{ href: '/hybrid-diagrams', label: i18n.t('nav.hybridDiagrams'), icon: '⚙️' },
+		{ href: '/image-convert', label: i18n.t('nav.imgConvert'), icon: '🎨' },
+		{ href: '/game-of-life', label: i18n.t('nav.gameOfLife'), icon: '🧬' },
+		{ href: '/converters', label: i18n.t('nav.converters'), icon: '🔄' }
+	]);
 
 	onMount(() => {
 		navbar.init();
@@ -79,8 +83,12 @@
 	</ul>
 
 	<div class="sidebar-footer">
-		<ThemeToggle />
-		<div class="timer">⏱ {formatTime(elapsed)}</div>
+		<div class="footer-buttons">
+			<div class="timer">⏱ {formatTime(elapsed)}</div>
+			<ThemeToggle />
+			<CrtToggle />
+			<LanguageSwitcher />
+		</div>
 	</div>
 </nav>
 
@@ -92,17 +100,22 @@
 		left: 0;
 		width: 320px;
 		height: 100vh;
-		background: var(--color-surface);
-		border-right: 3px solid var(--color-border);
+		background:
+			linear-gradient(180deg, color-mix(in srgb, var(--glass-highlight) 80%, transparent), transparent 18%),
+			var(--glass-surface-strong);
+		border-right: 1px solid var(--ui-border);
+		box-shadow: 18px 0 45px color-mix(in srgb, var(--color-shadow) 90%, transparent);
+		backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+		-webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
 		display: flex;
 		flex-direction: column;
 		z-index: 100;
 		transform: translateX(-100%);
 		transition: transform 0.3s ease, background-color 0.3s ease;
-	}
 
-	.sidebar.open {
-		transform: translateX(0);
+		&.open {
+			transform: translateX(0);
+		}
 	}
 
 	.sidebar-header {
@@ -123,7 +136,7 @@
 			top: 6rem;
 			width: 100%;
 			height: 4rem;
-			background-color: var(--color-surface);
+			background-color: var(--glass-surface-strong);
 			-webkit-mask-image: linear-gradient(to bottom, transparent, black);
 			mask-image: linear-gradient(to bottom, transparent, black);
 			transition: background-color 0.3s ease;
@@ -142,30 +155,30 @@
 		list-style: none;
 		padding: 1rem 0;
 		flex: 1;
-	}
 
-	.nav-list li a {
-		display: flex;
-		align-items: center;
-		gap: 0.85rem;
-		padding: 0.8rem 1.5rem;
-		text-decoration: none;
-		color: var(--color-text-secondary);
-		font-size: 0.95rem;
-		border-left: 3px solid transparent;
-		transition: all 0.15s ease;
-	}
+		li a {
+			display: flex;
+			align-items: center;
+			gap: 0.85rem;
+			padding: 0.8rem 1.5rem;
+			text-decoration: none;
+			color: var(--color-text-secondary);
+			font-size: 0.95rem;
+			border-left: 3px solid transparent;
+			transition: all 0.15s ease;
 
-	.nav-list li a:hover {
-		background: var(--color-bg-secondary);
-		color: var(--color-text);
-	}
+			&:hover {
+				background: color-mix(in srgb, var(--glass-surface) 86%, transparent);
+				color: var(--color-text);
+			}
 
-	.nav-list li a.active {
-		color: var(--color-primary);
-		border-left-color: var(--color-primary);
-		background: var(--color-bg-secondary);
-		font-weight: 600;
+			&.active {
+				color: var(--color-primary);
+				border-left-color: var(--color-primary);
+				background: color-mix(in srgb, var(--glass-surface) 92%, transparent);
+				font-weight: 600;
+			}
+		}
 	}
 
 	.nav-icon {
@@ -176,21 +189,29 @@
 
 	.sidebar-footer {
 		padding: 1rem 1.25rem;
-		border-top: 3px solid var(--color-border);
+		border-top: 1px solid var(--ui-border);
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		gap: 0.75rem;
 	}
 
+	.footer-buttons {
+		display: flex;
+		gap: 0.75rem;
+		align-items: center;
+	}
+
 	.timer {
-		background: var(--color-bg-secondary);
+		background: color-mix(in srgb, var(--glass-surface-strong) 94%, transparent);
 		color: var(--color-text);
-		border: 3px solid var(--color-border);
+		border: 1px solid var(--ui-border);
+		height: 2.25rem;
 		padding: 0.3rem 0.75rem;
 		border-radius: 20px;
 		font-size: 0.85rem;
 		font-family: monospace;
+		box-shadow: inset 0 1px 0 var(--glass-highlight);
 		transition: background-color 0.3s, color 0.3s;
 	}
 
@@ -202,8 +223,8 @@
 		left: 0;
 		width: 4rem;
 		height: 4rem;
-		background: var(--color-bg);
-		border: 3px solid var(--color-border);
+		background: var(--glass-surface-strong);
+		border: 1px solid var(--ui-border);
 		border-left: none;
 		border-radius: 0 8px 8px 0;
 		cursor: pointer;
@@ -213,36 +234,39 @@
 		gap: 4px;
 		padding: 0;
 		z-index: 200;
+		box-shadow: 0 12px 24px color-mix(in srgb, var(--color-shadow) 75%, transparent);
+		backdrop-filter: blur(calc(var(--glass-blur) * 0.8)) saturate(var(--glass-saturate));
+		-webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.8)) saturate(var(--glass-saturate));
 		transform: translateX(0);
 		transition: background-color 0.3s ease, transform 0.3s ease;
-	}
 
-	/* open: button right edge = sidebar right edge, flip horizontally */
-	.hamburger.open {
-		transform: translateX(calc(320px - 3.5rem)) scale(-1, 1);
-	}
+		/* open: button right edge = sidebar right edge, flip horizontally */
+		&.open {
+			transform: translateX(calc(320px - 3.5rem)) scale(-1, 1);
 
-	.hamburger span {
-		display: block;
-		width: 22px;
-		height: 3px;
-		background: var(--color-text-secondary);
-		border-radius: 999px;
-		transition: all 0.25s ease;
-	}
+			/* burger → left arrow chevron (scale(-1,1) on parent flips > to <) */
+			span:nth-child(1) {
+				width: 13px;
+				transform: rotate(35deg) translate(3px, 2px);
+			}
+			span:nth-child(2) {
+				width: 14px;
+				transform: translate(-11px, 0px);
+			}
+			span:nth-child(3) {
+				width: 13px;
+				transform: rotate(-35deg) translate(3px, -2px);
+			}
+		}
 
-	/* burger → left arrow chevron (scale(-1,1) on parent flips > to <) */
-	.hamburger.open span:nth-child(1) {
-		width: 13px;
-		transform: rotate(35deg) translate(3px, 2px);
-	}
-	.hamburger.open span:nth-child(2) {
-		width: 14px;
-    	transform: translate(-11px, 0px);
-	}
-	.hamburger.open span:nth-child(3) {
-		width: 13px;
-		transform: rotate(-35deg) translate(3px, -2px);
+		span {
+			display: block;
+			width: 22px;
+			height: 3px;
+			background: var(--color-text-secondary);
+			border-radius: 999px;
+			transition: all 0.25s ease;
+		}
 	}
 
 	/* --- Overlay (mobile only) ------------------ */
