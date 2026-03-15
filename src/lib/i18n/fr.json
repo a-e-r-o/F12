@@ -1,12 +1,12 @@
 {
 	"nav": {
-		"home": "Accueil",
+		"about": "À propos",
 		"hybridDiagrams": "Diagrammes mécaniques",
 		"imgConvert": "Conversion d'images",
 		"gameOfLife": "Jeu de la vie",
 		"converters": "Convertisseurs d'unités"
 	},
-	"home": {
+	"about": {
 		"welcome": "Bienvenue sur F12",
 		"subtitle": "Boîte à outils interactive",
 		"cardHybrid": "Visualisation SVG interactive d'un train épicycloïdal Toyota / Lexus avec sliders et explications.",
@@ -16,7 +16,7 @@
 		"cardGears": "Rendu canvas d'un système d'engrenages avec contrôle de vitesse."
 	},
 	"pageTitle": {
-		"home": "F12 — Accueil",
+		"about": "F12 — À propos",
 		"hybridDiagrams": "F12 — Diagrammes mécaniques",
 		"imgConvert": "F12 — Conversion d'images",
 		"gameOfLife": "F12 — Jeu de la vie",

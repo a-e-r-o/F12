@@ -29,7 +29,7 @@
 	}
 </script>
 
-<div class="converter-card glass-panel">
+<div class="converter-card">
 	<h2>🛣️ {i18n.t('converters.consumption')}</h2>
 	<div class="fields">
 		<label>
@@ -48,71 +48,53 @@
 
 <style>
 	.converter-card {
-		border-radius: 14px;
-		padding: 4rem 4rem;
-		max-width: 720px;
+		padding: 8px 12px;
 		width: 100%;
-		transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+		background: var(--win95-surface);
 	}
 
 	h2 {
-		margin: 0 0 1.25rem;
-		font-size: 1.2rem;
+		margin: 0 0 8px;
+		font-size: 13px;
 		color: var(--color-text);
+		font-weight: bold;
 	}
 
 	.fields {
 		display: flex;
 		align-items: flex-end;
-		gap: 1rem;
+		gap: 8px;
 	}
 
 	label {
 		display: flex;
 		flex-direction: column;
-		gap: 0.35rem;
+		gap: 2px;
 		flex: 1;
 
 		span {
-			font-size: 0.85rem;
-			color: var(--color-text-secondary);
-			font-weight: 500;
+			font-size: 11px;
+			color: var(--color-text);
 		}
 	}
 
 	input {
-		padding: 0.6rem 0.85rem;
-		border: 1.5px solid var(--color-border);
-		border-radius: 8px;
-		font-size: 1rem;
-		background: color-mix(in srgb, rgb(var(--color-surface-rgb) / 0.6) 88%, transparent);
+		padding: 3px 4px;
+		border: 2px solid;
+		border-color: var(--win95-border-dark) var(--win95-border-light) var(--win95-border-light) var(--win95-border-dark);
+		box-shadow: inset 1px 1px 0 var(--win95-border-darkest);
+		font-size: 12px;
+		background: #ffffff;
 		color: var(--color-text);
-		transition: border-color 0.15s;
 		width: 100%;
 		box-sizing: border-box;
-
-		&:focus {
-			outline: none;
-			border-color: var(--color-primary);
-			box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 25%, transparent);
-		}
+		font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 	}
 
 	.arrow {
-		font-size: 1.4rem;
-		padding-bottom: 0.4rem;
+		font-size: 14px;
+		padding-bottom: 4px;
 		color: var(--color-text-secondary);
 		user-select: none;
-	}
-
-	@media (max-width: 500px) {
-		.fields {
-			flex-direction: column;
-			align-items: stretch;
-		}
-		.arrow {
-			text-align: center;
-			padding: 0;
-		}
 	}
 </style>

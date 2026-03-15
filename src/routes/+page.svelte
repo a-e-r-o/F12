@@ -1,95 +1,112 @@
 <script lang="ts">
 	import { i18n } from '$lib/stores';
-
-	let cards = $derived([
-		{ href: '/hybrid-diagrams', icon: '⚙️', title: i18n.t('nav.hybridDiagrams'), desc: i18n.t('home.cardHybrid') },
-		{ href: '/converters', icon: '🔄', title: i18n.t('nav.converters'), desc: i18n.t('home.cardConverters') },
-		{ href: '/game-of-life', icon: '🧬', title: i18n.t('nav.gameOfLife'), desc: i18n.t('home.cardLife') },
-		{ href: '/image-convert', icon: '🎨', title: i18n.t('nav.imgConvert'), desc: i18n.t('home.cardImg') }
-	]);
+	import { Win95Window } from '$lib/components';
 </script>
 
 <svelte:head>
-	<title>{i18n.t('pageTitle.home')}</title>
+	<title>F12 — Desktop</title>
 </svelte:head>
 
-<div class="hero glass-panel">
-	<h1>{i18n.t('home.welcome')}</h1>
-	<p class="subtitle">{i18n.t('home.subtitle')}</p>
-</div>
+<!-- About window -->
+<Win95Window id="home" title={i18n.t('nav.about')} icon="ℹ️">
+	<div class="home-content">
+		<h2>F12</h2>
+		<p>{i18n.t('about.subtitle')}</p>
+		<p style="font-size: 11px; color: var(--color-text-secondary); margin-top: 8px;">
+			{i18n.t('footer.builtWith')}
+		</p>
+	</div>
+</Win95Window>
 
-<div class="card-grid">
-	{#each cards as card}
-		<a href={card.href} class="card glass-surface">
-			<span class="card-icon">{card.icon}</span>
-			<strong class="card-title">{card.title}</strong>
-			<p class="card-desc">{card.desc}</p>
-		</a>
-	{/each}
-</div>
+<!-- Hybrid Diagrams window -->
+<Win95Window id="hybrid-diagrams" title={i18n.t('nav.hybridDiagrams')} icon="⚙️">
+	{#await import('$lib/components/GearsSvg.svelte') then { default: GearsSvg }}
+		{#await import('$lib/components/GaugeCanvas.svelte') then { default: GaugeCanvas }}
+			<div class="diagrams-content">
+				<h3>{i18n.t('gearsSvg.title')}</h3>
+				<GearsSvg />
+				<GaugeCanvas />
+			</div>
+		{/await}
+	{/await}
+</Win95Window>
+
+<!-- Converters window -->
+<Win95Window id="converters" title={i18n.t('nav.converters')} icon="🔄">
+	{#await import('$lib/components/MpgConverter.svelte') then { default: MpgConverter }}
+		{#await import('$lib/components/FuelPriceConverter.svelte') then { default: FuelPriceConverter }}
+			<div class="converters-content">
+				<h3>{i18n.t('converters.title')}</h3>
+				<MpgConverter />
+				<FuelPriceConverter />
+			</div>
+		{/await}
+	{/await}
+</Win95Window>
+
+<!-- Game of Life window -->
+<Win95Window id="game-of-life" title={i18n.t('nav.gameOfLife')} icon="🧬">
+	<div class="placeholder-content">TODO</div>
+</Win95Window>
+
+<!-- Image Convert window -->
+<Win95Window id="image-convert" title={i18n.t('nav.imgConvert')} icon="🎨">
+	<div class="placeholder-content">TODO</div>
+</Win95Window>
+
+<!-- Wallpaper window -->
+<Win95Window id="wallpaper" title={i18n.locale === 'fr' ? "Fond d'écran" : 'Wallpaper'} icon="🖼️">
+	{#await import('$lib/components/WallpaperPicker.svelte') then { default: WallpaperPicker }}
+		<WallpaperPicker />
+	{/await}
+</Win95Window>
 
 <style>
-	.hero {
+	.home-content {
+		padding: 12px;
 		text-align: center;
-		padding: 3.5rem 1.5rem 1.5rem;
-		max-width: 920px;
-		margin: 1.5rem auto 0;
-		border-radius: 24px;
 	}
 
-	h1 {
-		font-size: 2rem;
-		font-family: 'Fredoka', system-ui, sans-serif;
-		color: var(--color-primary);
+	.home-content h2 {
+		font-size: 18px;
+		font-weight: bold;
+		margin-bottom: 6px;
 	}
 
-	.subtitle {
-		margin-top: 0.4rem;
-		font-size: 1.05rem;
-		color: var(--color-text-secondary);
+	.home-content p {
+		font-size: 12px;
 	}
 
-	.card-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-		gap: 1.25rem;
-		max-width: 900px;
-		margin: 2rem auto 3rem;
-		padding: 0 1.5rem;
-	}
-
-	.card {
+	.diagrams-content {
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
-		padding: 1.5rem;
-		border-radius: 14px;
-		text-decoration: none;
-		color: var(--color-text);
-		transition:
-			transform 0.15s ease,
-			box-shadow 0.15s ease,
-			border-color 0.15s ease;
-
-		&:hover {
-			transform: translateY(-3px);
-			box-shadow: 0 22px 40px color-mix(in srgb, var(--color-shadow) 90%, transparent);
-			border-color: var(--color-primary);
-		}
+		align-items: center;
+		gap: 12px;
+		padding: 8px;
 	}
 
-	.card-icon {
-		font-size: 1.8rem;
+	.diagrams-content h3 {
+		font-size: 13px;
+		font-weight: bold;
 	}
 
-	.card-title {
-		font-size: 1rem;
-		color: var(--color-text);
+	.converters-content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 12px;
+		padding: 8px;
 	}
 
-	.card-desc {
-		font-size: 0.82rem;
+	.converters-content h3 {
+		font-size: 13px;
+		font-weight: bold;
+	}
+
+	.placeholder-content {
+		padding: 20px;
+		text-align: center;
+		font-size: 12px;
 		color: var(--color-text-secondary);
-		line-height: 1.5;
 	}
 </style>

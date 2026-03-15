@@ -2,13 +2,13 @@
 	import { onMount } from 'svelte';
 	import { gears } from '$lib/stores';
 
-	import bgSrc from '$lib/assets/background.png';
-	import layoutSrc from '$lib/assets/layout.png';
-	import needleSrc from '$lib/assets/needle.png';
-	import arrowTopFwdSrc from '$lib/assets/arrow-top-forward.png';
-	import arrowTopBwdSrc from '$lib/assets/arrow-top-backward.png';
-	import arrowDownLeftFwdSrc from '$lib/assets/arrow-down-left-forward.png';
-	import arrowDownRightBwdSrc from '$lib/assets/arrow-down-right-backward.png';
+	import bgSrc from '$lib/assets/GaugeDiagram/background.png';
+	import layoutSrc from '$lib/assets/GaugeDiagram/gauge-layout.png';
+	import needleSrc from '$lib/assets/GaugeDiagram/needle.png';
+	import arrowTopFwdSrc from '$lib/assets/GaugeDiagram/arrow-top-forward.png';
+	import arrowTopBwdSrc from '$lib/assets/GaugeDiagram/arrow-top-backward.png';
+	import arrowDownLeftFwdSrc from '$lib/assets/GaugeDiagram/arrow-down-left-forward.png';
+	import arrowDownRightBwdSrc from '$lib/assets/GaugeDiagram/arrow-down-right-backward.png';
 
 	let canvas = $state<HTMLCanvasElement | null>(null);
 	let animId: number;
@@ -206,6 +206,8 @@
 		width: 100%;
 		max-width: 640px;
 		height: auto;
-		border-radius: 0.75rem;
+		border: 2px solid;
+		border-color: var(--win95-border-dark) var(--win95-border-light) var(--win95-border-light) var(--win95-border-dark);
+		box-shadow: inset 1px 1px 0 var(--win95-border-darkest);
 	}
 </style>

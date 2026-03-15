@@ -1,0 +1,193 @@
+export interface Win95Window {
+	id: string;
+	title: string;
+	icon: string;
+	visible: boolean;
+	maximized: boolean;
+	/** Whether the window can be maximized on desktop */
+	maximizable: boolean;
+	x: number;
+	y: number;
+	zIndex: number;
+	/** Pre-maximize position, for restore */
+	prevX: number;
+	prevY: number;
+}
+
+const MOBILE_BREAKPOINT = 768;
+let nextZ = 10;
+
+function randomPos(maxW: number, maxH: number, winW = 520, winH = 380) {
+	const x = Math.floor(Math.random() * Math.max(0, maxW - winW));
+	const y = Math.floor(Math.random() * Math.max(0, maxH - winH));
+	return { x, y };
+}
+
+function createWindowsState() {
+	let windows = $state<Win95Window[]>([
+		{ id: 'home', title: 'About', icon: 'ℹ️', visible: false, maximized: false, maximizable: false, x: 0, y: 0, zIndex: 10, prevX: 0, prevY: 0 },
+		{ id: 'hybrid-diagrams', title: 'Mechanical Diagrams',  icon: '⚙️', visible: true,  maximized: false, maximizable: true,  x: 0, y: 0, zIndex: 10, prevX: 0, prevY: 0 },
+		{ id: 'converters',      title: 'Converters',           icon: '🔄', visible: true,  maximized: false, maximizable: false, x: 0, y: 0, zIndex: 10, prevX: 0, prevY: 0 },
+		{ id: 'game-of-life',   title: 'Game of Life',         icon: '🧬', visible: true,  maximized: false, maximizable: true,  x: 0, y: 0, zIndex: 10, prevX: 0, prevY: 0 },
+		{ id: 'image-convert',  title: 'Image Conversion',     icon: '🎨', visible: true,  maximized: false, maximizable: true,  x: 0, y: 0, zIndex: 10, prevX: 0, prevY: 0 },
+		{ id: 'wallpaper',      title: 'Wallpaper',            icon: '🖼️', visible: false, maximized: false, maximizable: false, x: 0, y: 0, zIndex: 10, prevX: 0, prevY: 0 }
+	]);
+
+	let mobile = $state(false);
+
+	return {
+		get windows() {
+			return windows;
+		},
+
+		get isMobile() {
+			return mobile;
+		},
+
+		/** Call once on mount — sets up mobile detection, randomizes positions, and installs resize clamping */
+		init() {
+			const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`);
+			mobile = mql.matches;
+			mql.addEventListener('change', (e) => {
+				mobile = e.matches;
+			});
+
+			if (mobile) {
+				// On mobile: show only Mechanical Diagrams, maximized
+				for (const w of windows) {
+					w.visible = w.id === 'hybrid-diagrams';
+					w.maximized = true;
+					w.x = 0;
+					w.y = 0;
+				}
+			} else {
+				// On desktop: randomize positions
+				const dw = window.innerWidth;
+				const dh = window.innerHeight - 32;
+				for (const w of windows) {
+					const p = randomPos(dw, dh);
+					w.x = p.x;
+					w.y = p.y;
+					w.zIndex = nextZ++;
+				}
+			}
+
+			// Debounced resize: clamp window positions back into view
+			let resizeTimer: ReturnType<typeof setTimeout>;
+			window.addEventListener('resize', () => {
+				clearTimeout(resizeTimer);
+				resizeTimer = setTimeout(() => {
+					if (mobile) return;
+					const dw = window.innerWidth;
+					const dh = window.innerHeight - 32;
+					for (const w of windows) {
+						if (w.maximized) continue;
+						// Keep at least 40px of titlebar horizontally and fully visible vertically
+						w.x = Math.max(-200, Math.min(w.x, dw - 40));
+						w.y = Math.max(0, Math.min(w.y, dh - 22));
+					}
+				}, 300);
+			});
+		},
+
+		bringToFront(id: string) {
+			const w = windows.find((w) => w.id === id);
+			if (w) w.zIndex = nextZ++;
+		},
+
+		move(id: string, x: number, y: number) {
+			const w = windows.find((w) => w.id === id);
+			if (w) {
+				w.x = x;
+				w.y = y;
+			}
+		},
+
+		toggleMaximize(id: string) {
+			const w = windows.find((w) => w.id === id);
+			if (!w) return;
+			if (w.maximized) {
+				// Restore
+				w.maximized = false;
+				w.x = w.prevX;
+				w.y = w.prevY;
+			} else {
+				// Maximize
+				w.prevX = w.x;
+				w.prevY = w.y;
+				w.maximized = true;
+				w.x = 0;
+				w.y = 0;
+			}
+			w.zIndex = nextZ++;
+		},
+
+		/** Show a single window exclusively (used on mobile) */
+		showExclusive(id: string) {
+			for (const w of windows) {
+				w.visible = w.id === id;
+				if (w.visible) {
+					w.maximized = true;
+					w.x = 0;
+					w.y = 0;
+					w.zIndex = nextZ++;
+				}
+			}
+		},
+
+		toggle(id: string) {
+			if (mobile) {
+				this.showExclusive(id);
+				return;
+			}
+			const w = windows.find((w) => w.id === id);
+			if (w) {
+				w.visible = !w.visible;
+				if (w.visible) w.zIndex = nextZ++;
+			}
+		},
+
+		show(id: string) {
+			if (mobile) {
+				this.showExclusive(id);
+				return;
+			}
+			const w = windows.find((w) => w.id === id);
+			if (w) {
+				w.visible = true;
+				w.zIndex = nextZ++;
+			}
+		},
+
+		hide(id: string) {
+			const w = windows.find((w) => w.id === id);
+			if (w) {
+				w.visible = false;
+				if (mobile) {
+					// On mobile, show home when closing
+					const home = windows.find((w) => w.id === 'home');
+					if (home) {
+						home.visible = true;
+						home.maximized = true;
+						home.x = 0;
+						home.y = 0;
+						home.zIndex = nextZ++;
+					}
+				}
+			}
+		},
+
+		isVisible(id: string): boolean {
+			return windows.find((w) => w.id === id)?.visible ?? false;
+		},
+
+		/** Update titles when language changes */
+		updateTitles(titles: Record<string, string>) {
+			for (const w of windows) {
+				if (titles[w.id]) w.title = titles[w.id];
+			}
+		}
+	};
+}
+
+export const windowsState = createWindowsState();

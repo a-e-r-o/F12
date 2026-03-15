@@ -320,7 +320,7 @@
 </script>
 
 <div class="gears-svg">
-	<div class="whole-diagram-wrapper glass-panel">
+	<div class="whole-diagram-wrapper">
 		<div class="controls">
 			<div class="sliders-area">
 				<svg
@@ -697,15 +697,10 @@
 		top: 1rem;
 		left: 0; /* overridden immediately by JS $effect */
 		width: 260px;
-		padding: 1rem;
-		background:
-			linear-gradient(180deg, color-mix(in srgb, var(--glass-highlight) 65%, transparent), transparent 22%),
-			var(--glass-surface-strong);
+		padding: 8px;
+		background: var(--win95-surface);
 		border: 2px solid var(--popup-color);
-		border-radius: 0.75rem;
-		box-shadow: var(--glass-shadow);
-		backdrop-filter: blur(calc(var(--glass-blur) * 0.8)) saturate(var(--glass-saturate));
-		-webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.8)) saturate(var(--glass-saturate));
+		box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
 		color: var(--color-text);
 		animation: popup-in 0.15s ease;
 		z-index: 20;
@@ -772,15 +767,12 @@
 
 	.explanation-card {
 		width: 260px;
-		padding: 1rem;
-		background:
-			linear-gradient(180deg, color-mix(in srgb, var(--glass-highlight) 65%, transparent), transparent 22%),
-			var(--glass-surface);
+		padding: 8px;
+		background: var(--win95-surface);
 		border-left: 3px solid var(--popup-color);
-		border-radius: 0.5rem;
-		box-shadow: var(--glass-shadow);
-		backdrop-filter: blur(calc(var(--glass-blur) * 0.8)) saturate(var(--glass-saturate));
-		-webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.8)) saturate(var(--glass-saturate));
+		border: 2px solid;
+		border-color: var(--win95-border-light) var(--win95-border-darkest) var(--win95-border-darkest) var(--win95-border-light);
+		box-shadow: inset 1px 1px 0 var(--win95-border-mid), inset -1px -1px 0 var(--win95-border-dark);
 
 		strong {
 			display: block;

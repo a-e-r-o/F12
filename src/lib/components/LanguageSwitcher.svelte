@@ -56,90 +56,77 @@
 	.lang-switcher {
 		position: relative;
 		display: inline-block;
-        width: 2.25rem;
-		height: 2.25rem;
+        width: 20px;
+		height: 20px;
 	}
 
 	.lang-toggle {
-		background: var(--glass-surface-strong);
-		border: 1px solid var(--ui-border);
-		border-radius: 50%;
+		background: var(--win95-btn-face);
+		border: 1px solid var(--win95-border-dark);
+		border-radius: 0;
 		height: 100%;
         width: 100%;
 		padding: 0;
 		overflow: hidden;
 		cursor: pointer;
-		box-shadow: inset 0 1px 0 var(--glass-highlight);
-		backdrop-filter: blur(calc(var(--glass-blur) * 0.55));
-		-webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.55));
-		transition:
-			border-color 0.2s,
-			transform 0.2s;
+	}
 
-		&:hover {
-			transform: scale(1.1);
-			border-color: var(--color-primary);
-		}
+	.lang-toggle:hover {
+		border-color: var(--win95-border-darkest);
 	}
 
     .flag-img {
         display: block;
         width: 100%;
         height: 100%;
-        padding: 4px;
+        padding: 1px;
         box-sizing: border-box;
-        border-radius: 100%;
-        overflow: hidden;
         object-fit: cover;            
     }
 
 	.flag-img-sm {
-		width: 1.4rem;
-		height: 1rem;
+		width: 18px;
+		height: 12px;
 		object-fit: cover;
-		border-radius: 2px;
 		flex-shrink: 0;
 	}
 
 	.dropdown {
 		position: absolute;
-		bottom: calc(100% + 0.5rem);
+		bottom: calc(100% + 4px);
 		left: 50%;
 		transform: translateX(-50%);
 		list-style: none;
 		margin: 0;
-		padding: 0.35rem 0;
-		background: var(--glass-surface-strong);
-		border: 1px solid var(--ui-border);
-		border-radius: 8px;
-		box-shadow: var(--glass-shadow);
-		backdrop-filter: blur(calc(var(--glass-blur) * 0.75)) saturate(var(--glass-saturate));
-		-webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.75)) saturate(var(--glass-saturate));
-		min-width: 140px;
-		z-index: 300;
+		padding: 2px 0;
+		background: var(--win95-surface);
+		border: 2px solid;
+		border-color: var(--win95-border-light) var(--win95-border-darkest) var(--win95-border-darkest) var(--win95-border-light);
+		box-shadow: inset 1px 1px 0 var(--win95-border-mid), inset -1px -1px 0 var(--win95-border-dark);
+		min-width: 120px;
+		z-index: 10001;
 
         li button {
             display: flex;
             align-items: center;
-            gap: 0.6rem;
+            gap: 6px;
             width: 100%;
-            padding: 0.45rem 1rem;
+            padding: 3px 8px;
             border: none;
             background: none;
             color: var(--color-text);
-            font-size: 0.9rem;
+            font-size: 11px;
             cursor: pointer;
-            transition: background-color 0.1s;
-
+			font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
 		li button:hover {
-				background: color-mix(in srgb, var(--glass-surface) 90%, transparent);
+			background: var(--color-primary);
+			color: #ffffff;
         }
 
         li button.active {
-            color: var(--color-primary);
-            font-weight: 600;
+            font-weight: bold;
         }
     }
 </style>

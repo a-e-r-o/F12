@@ -174,14 +174,16 @@
 
 	h2 {
 		color: var(--color-text);
-		font-size: 1.4rem;
+		font-size: 13px;
+		font-weight: bold;
 	}
 
 	canvas {
 		max-width: 100%;
 		height: auto;
-		border-radius: 12px;
-		border: 1px solid var(--color-border);
+		border: 2px solid;
+		border-color: var(--win95-border-dark) var(--win95-border-light) var(--win95-border-light) var(--win95-border-dark);
+		box-shadow: inset 1px 1px 0 var(--win95-border-darkest);
 	}
 
 	.controls {

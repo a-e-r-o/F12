@@ -1,12 +1,12 @@
 {
 	"nav": {
-		"home": "Home",
+		"about": "About",
 		"hybridDiagrams": "Mechanical Diagrams",
 		"imgConvert": "Image Conversion",
 		"gameOfLife": "Game of Life",
 		"converters": "Unit converters"
 	},
-	"home": {
+	"about": {
 		"welcome": "Welcome to F12",
 		"subtitle": "Interactive toolbox",
 		"cardHybrid": "Interactive SVG visualization of a Toyota / Lexus epicyclic gear train with sliders and explanations.",
@@ -16,7 +16,7 @@
 		"cardGears": "Canvas rendering of a gear system with speed control."
 	},
 	"pageTitle": {
-		"home": "F12 — Home",
+		"about": "F12 — About",
 		"hybridDiagrams": "F12 — Mechanical Diagrams",
 		"imgConvert": "F12 — Image Conversion",
 		"gameOfLife": "F12 — Game of Life",
