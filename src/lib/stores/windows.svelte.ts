@@ -15,7 +15,19 @@ export interface Win95Window {
 }
 
 const MOBILE_BREAKPOINT = 768;
+const STORAGE_KEY = 'win95-windows';
 let nextZ = 10;
+let saveTimer: ReturnType<typeof setTimeout> | null = null;
+
+function scheduleSave(windows: Win95Window[]) {
+	if (saveTimer !== null) clearTimeout(saveTimer);
+	saveTimer = setTimeout(() => {
+		const data = windows.map(({ id, visible, maximized, x, y, prevX, prevY }) => ({
+			id, visible, maximized, x, y, prevX, prevY
+		}));
+		localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+	}, 800);
+}
 
 function randomPos(maxW: number, maxH: number, winW = 520, winH = 380) {
 	const x = Math.floor(Math.random() * Math.max(0, maxW - winW));
@@ -61,14 +73,35 @@ function createWindowsState() {
 					w.y = 0;
 				}
 			} else {
-				// On desktop: randomize positions
-				const dw = window.innerWidth;
-				const dh = window.innerHeight - 32;
-				for (const w of windows) {
-					const p = randomPos(dw, dh);
-					w.x = p.x;
-					w.y = p.y;
-					w.zIndex = nextZ++;
+				// On desktop: restore saved state or randomize positions
+				const saved = localStorage.getItem(STORAGE_KEY);
+				if (saved) {
+					try {
+						const data: Pick<Win95Window, 'id' | 'visible' | 'maximized' | 'x' | 'y' | 'prevX' | 'prevY'>[] = JSON.parse(saved);
+						for (const w of windows) {
+							const s = data.find((d) => d.id === w.id);
+							if (s) {
+								w.visible = s.visible;
+								w.maximized = s.maximized;
+								w.x = s.x;
+								w.y = s.y;
+								w.prevX = s.prevX;
+								w.prevY = s.prevY;
+							}
+							w.zIndex = nextZ++;
+						}
+					} catch {
+						localStorage.removeItem(STORAGE_KEY);
+					}
+				} else {
+					const dw = window.innerWidth;
+					const dh = window.innerHeight - 32;
+					for (const w of windows) {
+						const p = randomPos(dw, dh);
+						w.x = p.x;
+						w.y = p.y;
+						w.zIndex = nextZ++;
+					}
 				}
 			}
 
@@ -100,6 +133,7 @@ function createWindowsState() {
 			if (w) {
 				w.x = x;
 				w.y = y;
+				scheduleSave(windows);
 			}
 		},
 
@@ -120,6 +154,7 @@ function createWindowsState() {
 				w.y = 0;
 			}
 			w.zIndex = nextZ++;
+			scheduleSave(windows);
 		},
 
 		/** Show a single window exclusively (used on mobile) */
@@ -144,6 +179,7 @@ function createWindowsState() {
 			if (w) {
 				w.visible = !w.visible;
 				if (w.visible) w.zIndex = nextZ++;
+				scheduleSave(windows);
 			}
 		},
 
@@ -156,6 +192,7 @@ function createWindowsState() {
 			if (w) {
 				w.visible = true;
 				w.zIndex = nextZ++;
+				scheduleSave(windows);
 			}
 		},
 
@@ -173,6 +210,8 @@ function createWindowsState() {
 						home.y = 0;
 						home.zIndex = nextZ++;
 					}
+				} else {
+					scheduleSave(windows);
 				}
 			}
 		},

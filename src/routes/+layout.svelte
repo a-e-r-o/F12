@@ -1,7 +1,7 @@
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.svg';
 	import '$lib/assets/theme.css';
-	import { theme, i18n, windowsState } from '$lib/stores';
+	import { i18n, windowsState } from '$lib/stores';
 	import { wallpaperState } from '$lib/stores/wallpaper.svelte';
 	import { Win95Taskbar } from '$lib/components';
 	import { onMount } from 'svelte';
@@ -11,7 +11,6 @@
 	let wpUrl = $derived(wallpaperState.currentUrl);
 
 	onMount(() => {
-		theme.init();
 		i18n.init();
 		windowsState.init();
 		wallpaperState.init();

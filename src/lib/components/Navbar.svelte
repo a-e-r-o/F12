@@ -3,7 +3,6 @@
 	import { page } from '$app/state';
 	import { navbar } from '$lib/stores';
 	import { i18n } from '$lib/stores/i18n.svelte';
-	import ThemeToggle from './ThemeToggle.svelte';
 	import LanguageSwitcher from './LanguageSwitcher.svelte';
 	import CrtToggle from './CrtToggle.svelte';
 
@@ -85,7 +84,6 @@
 	<div class="sidebar-footer">
 		<div class="footer-buttons">
 			<div class="timer">⏱ {formatTime(elapsed)}</div>
-			<ThemeToggle />
 			<CrtToggle />
 			<LanguageSwitcher />
 		</div>

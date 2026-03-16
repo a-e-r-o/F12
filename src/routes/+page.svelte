@@ -35,11 +35,14 @@
 <Win95Window id="converters" title={i18n.t('nav.converters')} icon="🔄">
 	{#await import('$lib/components/MpgConverter.svelte') then { default: MpgConverter }}
 		{#await import('$lib/components/FuelPriceConverter.svelte') then { default: FuelPriceConverter }}
-			<div class="converters-content">
-				<h3>{i18n.t('converters.title')}</h3>
-				<MpgConverter />
-				<FuelPriceConverter />
-			</div>
+			{#await import('$lib/components/FuelCostCalculator.svelte') then { default: FuelCostCalculator }}
+				<div class="converters-content">
+					<h3>{i18n.t('converters.title')}</h3>
+					<MpgConverter />
+					<FuelPriceConverter />
+					<FuelCostCalculator />
+				</div>
+			{/await}
 		{/await}
 	{/await}
 </Win95Window>

@@ -1,14 +1,5 @@
-/*
- * Global theme variables.
- *
- * Convention:
- *   - Define ALL colours as CSS custom properties in [data-theme] blocks
- *   - Components use `var(--color-xxx)` exclusively — never hard-coded colours
- *   - Adding a new theme = adding a new [data-theme="xxx"] block
- */
-
-/* --- Light theme (default) ----------------------------- */
-[data-theme='light'] {
+/* --- Win95 variables ----------------------------------- */
+:root {
 	--color-bg: #008080;
 	--color-bg-secondary: #c0c0c0;
 	--color-surface: #c0c0c0;
@@ -37,53 +28,13 @@
 	--win95-btn-shadow: #808080;
 	--win95-btn-dark-shadow: #000000;
 
-	/* Kept for gear visualization */
+	/* Gear visualization */
 	--indicator-fill: #1a1a2e;
 	--gear-sun: #2dd36f;
 	--gear-planet: #05a6b8;
 	--gear-ring: #f7b500;
 	--gear-carrier: #05a6b8;
 	--indicator-carrier: #1a1a2e;
-	--ui-border: var(--color-border);
-}
-
-/* --- Dark theme ---------------------------------------- */
-[data-theme='dark'] {
-	--color-bg: #004040;
-	--color-bg-secondary: #a0a0a0;
-	--color-surface: #a0a0a0;
-	--color-surface-rgb: 160 160 160;
-	--color-text: #000000;
-	--color-text-secondary: #333333;
-	--color-primary: #000080;
-	--color-primary-hover: #0000a0;
-	--color-border: #606060;
-	--color-shadow: rgba(0, 0, 0, 0.4);
-
-	/* Win95 3D border colors */
-	--win95-border-light: #e0e0e0;
-	--win95-border-mid: #c0c0c0;
-	--win95-border-dark: #606060;
-	--win95-border-darkest: #000000;
-	--win95-surface: #a0a0a0;
-	--win95-titlebar-active: linear-gradient(90deg, #000060, #0060a0);
-	--win95-titlebar-inactive: linear-gradient(90deg, #606060, #909090);
-	--win95-titlebar-text-active: #ffffff;
-	--win95-titlebar-text-inactive: #a0a0a0;
-	--win95-taskbar-bg: #a0a0a0;
-	--win95-desktop-bg: #004040;
-	--win95-btn-face: #a0a0a0;
-	--win95-btn-highlight: #e0e0e0;
-	--win95-btn-shadow: #606060;
-	--win95-btn-dark-shadow: #000000;
-
-	/* Kept for gear visualization */
-	--indicator-fill: #ffffff;
-	--gear-sun: #2dd36f;
-	--gear-planet: #05a6b8;
-	--gear-ring: #f7b500;
-	--gear-carrier: #05a6b8;
-	--indicator-carrier: #ffffff;
 	--ui-border: var(--color-border);
 }
 
@@ -97,8 +48,7 @@
 }
 
 html {
-	/* Smooth transition between themes */
-	color-scheme: light dark;
+	color-scheme: light;
 }
 
 body {
@@ -110,8 +60,6 @@ body {
 	overflow: hidden;
 	font-size: 12px;
 }
-
-/* CRT/VHS effects removed — Win95 mode */
 
 /* --- Win95 utility classes ------------------------------ */
 .win95-raised {

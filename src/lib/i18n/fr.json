@@ -26,12 +26,6 @@
 	"footer": {
 		"builtWith": "Construit avec SvelteKit & Svelte 5"
 	},
-	"theme": {
-		"toggleTitle": "Basculer le thème",
-		"toggleAria": "Basculer le thème {theme}",
-		"light": "clair",
-		"dark": "sombre"
-	},
 	"converters": {
 		"title": "Convertisseurs d'unités",
 		"consumption": "Consommation",
@@ -46,7 +40,12 @@
 		"usdPlaceholder": "ex : 3,50",
 		"rateError": "Impossible de charger le taux de change.",
 		"rateLoading": "Chargement du taux de change…",
-		"exchangeRate": "Taux EUR → USD : {rate}"
+		"exchangeRate": "Taux EUR → USD : {rate}",
+		"fuelCostTitle": "Coût carburant par distance",
+		"fuelCostMetricMode": "Métrique (€)",
+		"fuelCostImperialMode": "Impérial ($)",
+		"fuelCostPer100km": "Coût pour 100 km",
+		"fuelCostPer100mi": "Coût pour 100 miles"
 	},
 	"gearsCanvas": {
 		"title": "Engrenages — Approche Canvas",

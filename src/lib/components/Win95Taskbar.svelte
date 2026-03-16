@@ -267,6 +267,7 @@
 		border-color: var(--win95-border-dark) var(--win95-border-light) var(--win95-border-light) var(--win95-border-dark);
 		box-shadow: inset 1px 1px 0 var(--win95-border-darkest);
 		white-space: nowrap;
+		line-height: 1.65;
 	}
 
 	/* Mobile styles */

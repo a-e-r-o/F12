@@ -1,31 +1,19 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { i18n } from '$lib/stores/i18n.svelte';
-
-	const LITERS_PER_GALLON = 3.785411784;
+	import { fuelRate } from '$lib/stores/fuelRate.svelte';
+	import { eurLiterToUsdGallon, usdGallonToEurLiter } from '$lib/utils/conversions';
 
 	let eurPerLiter = $state<number | null>(null);
 	let usdPerGallon = $state<number | null>(null);
-	let rate = $state<number | null>(null);
-	let rateError = $state(false);
 
-	onMount(async () => {
-		try {
-			const res = await fetch('https://open.er-api.com/v6/latest/EUR');
-			if (!res.ok) throw new Error('API error');
-			const data = await res.json();
-			rate = data.rates?.USD ?? null;
-			if (!rate) throw new Error('No USD rate');
-		} catch {
-			rateError = true;
-		}
-	});
+	onMount(() => fuelRate.init());
 
 	function onEurInput(e: Event) {
 		const v = parseFloat((e.target as HTMLInputElement).value);
-		if (Number.isFinite(v) && v >= 0 && rate) {
+		if (Number.isFinite(v) && v >= 0 && fuelRate.rate) {
 			eurPerLiter = v;
-			usdPerGallon = Math.round(v * LITERS_PER_GALLON * rate * 100) / 100;
+			usdPerGallon = eurLiterToUsdGallon(v, fuelRate.rate);
 		} else {
 			eurPerLiter = null;
 			usdPerGallon = null;
@@ -34,9 +22,9 @@
 
 	function onUsdInput(e: Event) {
 		const v = parseFloat((e.target as HTMLInputElement).value);
-		if (Number.isFinite(v) && v >= 0 && rate) {
+		if (Number.isFinite(v) && v >= 0 && fuelRate.rate) {
 			usdPerGallon = v;
-			eurPerLiter = Math.round((v / (LITERS_PER_GALLON * rate)) * 100) / 100;
+			eurPerLiter = usdGallonToEurLiter(v, fuelRate.rate);
 		} else {
 			usdPerGallon = null;
 			eurPerLiter = null;
@@ -47,9 +35,9 @@
 <div class="converter-card">
 	<h2>⛽ {i18n.t('converters.fuelPrice')}</h2>
 
-	{#if rateError}
+	{#if fuelRate.error}
 		<p class="rate-error">{i18n.t('converters.rateError')}</p>
-	{:else if !rate}
+	{:else if fuelRate.loading}
 		<p class="rate-loading">{i18n.t('converters.rateLoading')}</p>
 	{:else}
 		<div class="fields">
@@ -66,7 +54,7 @@
 			</label>
 		</div>
 
-		<p class="rate-info">{i18n.t('converters.exchangeRate', { rate: rate.toFixed(4) })}</p>
+		<p class="rate-info">{i18n.t('converters.exchangeRate', { rate: fuelRate.rate!.toFixed(4) })}</p>
 	{/if}
 </div>
 

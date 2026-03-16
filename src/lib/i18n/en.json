@@ -26,12 +26,6 @@
 	"footer": {
 		"builtWith": "Built with SvelteKit & Svelte 5"
 	},
-	"theme": {
-		"toggleTitle": "Toggle theme",
-		"toggleAria": "Switch to {theme} theme",
-		"light": "light",
-		"dark": "dark"
-	},
 	"converters": {
 		"title": "Unit converters",
 		"consumption": "Fuel Consumption",
@@ -46,7 +40,12 @@
 		"usdPlaceholder": "e.g. 3.50",
 		"rateError": "Unable to load exchange rate.",
 		"rateLoading": "Loading exchange rate…",
-		"exchangeRate": "EUR → USD rate: {rate}"
+		"exchangeRate": "EUR → USD rate: {rate}",
+		"fuelCostTitle": "Fuel Cost per Distance",
+		"fuelCostMetricMode": "Metric (€)",
+		"fuelCostImperialMode": "Imperial ($)",
+		"fuelCostPer100km": "Cost per 100 km",
+		"fuelCostPer100mi": "Cost per 100 miles"
 	},
 	"gearsCanvas": {
 		"title": "Gears — Canvas Approach",
