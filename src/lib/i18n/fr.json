@@ -41,11 +41,14 @@
 		"rateError": "Impossible de charger le taux de change.",
 		"rateLoading": "Chargement du taux de change…",
 		"exchangeRate": "Taux EUR → USD : {rate}",
-		"fuelCostTitle": "Coût carburant par distance",
+		"fuelCostTitle": "Calculateur de coût carburant",
 		"fuelCostMetricMode": "Métrique (€)",
 		"fuelCostImperialMode": "Impérial ($)",
-		"fuelCostPer100km": "Coût pour 100 km",
-		"fuelCostPer100mi": "Coût pour 100 miles"
+		"fuelCostDistance": "Distance (km)",
+		"fuelCostDistanceMi": "Distance (miles)",
+		"fuelCostDistancePlaceholder": "ex : 100",
+		"fuelCostResult": "Coût pour {distance} km",
+		"fuelCostResultMi": "Coût pour {distance} miles"
 	},
 	"gearsCanvas": {
 		"title": "Engrenages — Approche Canvas",

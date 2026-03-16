@@ -6,22 +6,27 @@
 		mpgToLper100,
 		lper100ToMpg,
 		eurLiterToUsdGallon,
-		usdGallonToEurLiter
+		usdGallonToEurLiter,
+		kmToMiles,
+		milesToKm
 	} from '$lib/utils/conversions';
 
-	// true = metric (€/L, L/100km → €/100km), false = imperial ($/gal, MPG → $/100miles)
+	// true = metric (€/L, L/100km, km), false = imperial ($/gal, MPG, miles)
 	let metric = $state(true);
 
 	let fuelPrice = $state<number | null>(null);
 	let consumption = $state<number | null>(null);
+	let distance = $state<number>(100);
 
 	let result = $derived.by(() => {
-		if (fuelPrice === null || consumption === null) return null;
+		if (fuelPrice === null || consumption === null || distance <= 0) return null;
 		if (fuelPrice < 0 || consumption <= 0) return null;
 		if (metric) {
-			return Math.round(fuelPrice * consumption * 100) / 100;
+			// €/L × L/100km × km / 100 = €
+			return Math.round(fuelPrice * consumption * distance / 100 * 100) / 100;
 		} else {
-			return Math.round((100 / consumption) * fuelPrice * 100) / 100;
+			// (miles / MPG) × $/gal = $
+			return Math.round((distance / consumption) * fuelPrice * 100) / 100;
 		}
 	});
 
@@ -37,6 +42,11 @@
 		consumption = Number.isFinite(v) && v > 0 ? v : null;
 	}
 
+	function onDistanceInput(e: Event) {
+		const v = parseFloat((e.target as HTMLInputElement).value);
+		distance = Number.isFinite(v) && v > 0 ? v : 0;
+	}
+
 	function switchMode(toMetric: boolean) {
 		if (metric === toMetric) return;
 
@@ -48,6 +58,8 @@
 			if (consumption !== null) {
 				consumption = mpgToLper100(consumption);
 			}
+			distance = milesToKm(distance);
+		distance = Math.round(distance);
 		} else {
 			// metric → imperial
 			if (fuelPrice !== null && fuelRate.rate) {
@@ -56,6 +68,8 @@
 			if (consumption !== null) {
 				consumption = lper100ToMpg(consumption);
 			}
+			distance = kmToMiles(distance);
+		distance = Math.round(distance);
 		}
 
 		metric = toMetric;
@@ -81,7 +95,7 @@
 			<input
 				type="number"
 				min="0"
-				step="any"
+				step="0.01"
 				value={fuelPrice ?? ''}
 				oninput={onPriceInput}
 				placeholder={metric ? i18n.t('converters.eurPlaceholder') : i18n.t('converters.usdPlaceholder')}
@@ -103,15 +117,33 @@
 		</label>
 	</div>
 
-	<div class="result" class:has-value={result !== null}>
-		<span class="result-label">{metric ? i18n.t('converters.fuelCostPer100km') : i18n.t('converters.fuelCostPer100mi')}</span>
-		<span class="result-value">
-			{#if result !== null}
-				{metric ? '€' : '$'}{result.toFixed(2)}
-			{:else}
-				—
-			{/if}
-		</span>
+	<div class="bottom-row">
+		<label class="label-distance">
+			<span>{metric ? i18n.t('converters.fuelCostDistance') : i18n.t('converters.fuelCostDistanceMi')}</span>
+			<input
+				type="number"
+				min="1"
+				step="1"
+				value={distance}
+				oninput={onDistanceInput}
+				placeholder={i18n.t('converters.fuelCostDistancePlaceholder')}
+			/>
+		</label>
+
+		<div class="result" class:has-value={result !== null}>
+			<span class="result-label">
+				{metric
+					? i18n.t('converters.fuelCostResult', { distance: distance.toString() })
+					: i18n.t('converters.fuelCostResultMi', { distance: distance.toString() })}
+			</span>
+			<span class="result-value">
+				{#if result !== null}
+					{metric ? '€' : '$'}{result.toFixed(2)}
+				{:else}
+					—
+				{/if}
+			</span>
+		</div>
 	</div>
 </div>
 
@@ -179,6 +211,17 @@
 		}
 	}
 
+	.label-distance {
+		flex: 0 0 90px;
+	}
+
+	.bottom-row {
+		display: flex;
+		align-items: flex-end;
+		gap: 8px;
+		margin-top: 10px;
+	}
+
 	input {
 		padding: 3px 4px;
 		border: 2px solid;
@@ -204,8 +247,8 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		margin-top: 10px;
-		padding: 5px 8px;
+		flex: 1;
+		padding: 0 8px;
 		border: 2px solid;
 		border-color: var(--win95-border-dark) var(--win95-border-light) var(--win95-border-light) var(--win95-border-dark);
 		box-shadow: inset 1px 1px 0 var(--win95-border-darkest);

@@ -43,14 +43,14 @@
 		<div class="fields">
 			<label>
 				<span>{i18n.t('converters.eurPerLiter')}</span>
-				<input type="number" min="0" step="any" value={eurPerLiter ?? ''} oninput={onEurInput} placeholder={i18n.t('converters.eurPlaceholder')} />
+				<input type="number" min="0" step="0.01" value={eurPerLiter ?? ''} oninput={onEurInput} placeholder={i18n.t('converters.eurPlaceholder')} />
 			</label>
 
 			<span class="arrow">⇄</span>
 
 			<label>
 				<span>{i18n.t('converters.usdPerGallon')}</span>
-				<input type="number" min="0" step="any" value={usdPerGallon ?? ''} oninput={onUsdInput} placeholder={i18n.t('converters.usdPlaceholder')} />
+				<input type="number" min="0" step="0.01" value={usdPerGallon ?? ''} oninput={onUsdInput} placeholder={i18n.t('converters.usdPlaceholder')} />
 			</label>
 		</div>
 

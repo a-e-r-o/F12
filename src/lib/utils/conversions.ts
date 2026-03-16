@@ -25,3 +25,13 @@ export function eurLiterToUsdGallon(eurPerLiter: number, eurToUsd: number): numb
 export function usdGallonToEurLiter(usdPerGallon: number, eurToUsd: number): number {
 	return Math.round((usdPerGallon / (LITERS_PER_GALLON * eurToUsd)) * 100) / 100;
 }
+
+/** km → miles */
+export function kmToMiles(km: number): number {
+	return Math.round(km * 0.621371 * 10) / 10;
+}
+
+/** miles → km */
+export function milesToKm(miles: number): number {
+	return Math.round(miles / 0.621371 * 10) / 10;
+}

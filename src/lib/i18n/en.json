@@ -41,11 +41,14 @@
 		"rateError": "Unable to load exchange rate.",
 		"rateLoading": "Loading exchange rate…",
 		"exchangeRate": "EUR → USD rate: {rate}",
-		"fuelCostTitle": "Fuel Cost per Distance",
+		"fuelCostTitle": "Fuel Cost Calculator",
 		"fuelCostMetricMode": "Metric (€)",
 		"fuelCostImperialMode": "Imperial ($)",
-		"fuelCostPer100km": "Cost per 100 km",
-		"fuelCostPer100mi": "Cost per 100 miles"
+		"fuelCostDistance": "Distance (km)",
+		"fuelCostDistanceMi": "Distance (miles)",
+		"fuelCostDistancePlaceholder": "e.g. 100",
+		"fuelCostResult": "Cost for {distance} km",
+		"fuelCostResultMi": "Cost for {distance} miles"
 	},
 	"gearsCanvas": {
 		"title": "Gears — Canvas Approach",
