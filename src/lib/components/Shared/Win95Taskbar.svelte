@@ -1,10 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { windowsState } from '$lib/stores/windows.svelte';
+	import { programs } from '$lib/stores/programs.svelte';
 	import { i18n } from '$lib/stores/i18n.svelte';
 	import LanguageSwitcher from './LanguageSwitcher.svelte';
+	import StartMenu from './StartMenu.svelte';
 
 	let elapsed = $state(0);
+	let startMenuOpen = $state(false);
 	let menuOpen = $state(false);
 	let isMobile = $derived(windowsState.isMobile);
 
@@ -28,14 +31,11 @@
 	}
 
 	$effect(() => {
-		windowsState.updateTitles({
-			'home': i18n.t('nav.about'),
-			'hybrid-diagrams': i18n.t('nav.hybridDiagrams'),
-			'converters': i18n.t('nav.converters'),
-			'game-of-life': i18n.t('nav.gameOfLife'),
-			'image-convert': i18n.t('nav.imgConvert'),
-			'wallpaper': i18n.locale === 'fr' ? 'Fond d\'écran' : 'Wallpaper'
-		});
+		const titles: Record<string, string> = {};
+		for (const p of programs) {
+			titles[p.id] = i18n.t(p.titleKey);
+		}
+		windowsState.updateTitles(titles);
 	});
 </script>
 
@@ -80,15 +80,17 @@
 		</div>
 	{:else}
 		<!-- Desktop: full taskbar -->
-		<button class="start-btn win95-btn">
+		<button class="start-btn win95-btn" class:active={startMenuOpen} onclick={() => startMenuOpen = !startMenuOpen}>
 			<span class="start-logo">🪟</span>
-			<span class="start-text">{i18n.locale === 'fr' ? 'Démarrer' : 'Start'}</span>
+			<span class="start-text">{i18n.t('startMenu.start')}</span>
 		</button>
+
+		<StartMenu open={startMenuOpen} onclose={() => startMenuOpen = false} />
 
 		<div class="taskbar-divider"></div>
 
 		<div class="task-buttons">
-			{#each windowsState.windows.filter(w => w.id !== 'wallpaper') as win (win.id)}
+			{#each windowsState.windows.filter(w => w.id !== 'wallpaper' && (!w.closable || w.running)) as win (win.id)}
 				<button
 					class="task-btn"
 					class:active={win.visible}
@@ -144,6 +146,11 @@
 		font-weight: bold;
 		font-size: 11px;
 		flex-shrink: 0;
+	}
+
+	.start-btn.active {
+		border-color: var(--win95-border-darkest) var(--win95-border-light) var(--win95-border-light) var(--win95-border-darkest);
+		box-shadow: inset 1px 1px 0 var(--win95-border-dark), inset -1px -1px 0 var(--win95-border-mid);
 	}
 
 	.mobile .start-btn {

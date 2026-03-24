@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import { setContext } from 'svelte';
 	import { windowsState } from '$lib/stores/windows.svelte';
 
 	let {
@@ -18,7 +19,25 @@
 	let visible = $derived(win?.visible ?? false);
 	let maximized = $derived(win?.maximized ?? false);
 	let maximizable = $derived(win?.maximizable ?? true);
+	let closable = $derived(win?.closable ?? false);
 	let isMobile = $derived(windowsState.isMobile);
+
+	/**
+	 * Two-level lifecycle:
+	 *  - mounted: the program is alive in memory.
+	 *    Closable windows → alive only while running (false after close → component tree destroyed).
+	 *    Non-closable windows → always alive.
+	 *  - visible: the window content is rendered on screen.
+	 *    false on minimize → inner component destroyed → zero resource usage.
+	 *
+	 * Inner components (games, etc.) can consume the 'win95:active' context to
+	 * reactively pause work (rAF loops, timers) when the window is hidden, in
+	 * case they are ever kept alive via CSS rather than destroyed.
+	 */
+	let mounted = $derived(!win?.closable || (win?.running ?? false));
+
+	// Reactive context: inner components read `.value` inside $derived / $effect
+	setContext('win95:active', { get value() { return visible; } });
 
 	let dragging = $state(false);
 	let dragOffsetX = 0;
@@ -26,6 +45,10 @@
 
 	function minimize() {
 		windowsState.hide(id);
+	}
+
+	function closeWindow() {
+		windowsState.close(id);
 	}
 
 	function toggleMaximize() {
@@ -67,15 +90,16 @@
 	}
 </script>
 
-{#if visible && win}
+{#if mounted}
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
 		class="win95-window"
 		class:maximized
 		class:mobile={isMobile}
+		class:minimized={!visible}
 		style={maximized || isMobile
-			? `left: 0; top: 0; z-index: ${win.zIndex};`
-			: `left: ${win.x}px; top: ${win.y}px; z-index: ${win.zIndex};`}
+			? `left: 0; top: 0; z-index: ${win?.zIndex};`
+			: `left: ${win?.x ?? 0}px; top: ${win?.y ?? 0}px; z-index: ${win?.zIndex ?? 10};`}
 		onmousedown={bringToFront}
 	>
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -113,7 +137,7 @@
 						</svg>
 					{/if}
 				</button>
-				<button class="tb-btn close-btn" disabled aria-label="Close" title="Close">
+				<button class="tb-btn close-btn" disabled={!closable} onclick={closable ? closeWindow : undefined} aria-label="Close" title="Close">
 					<svg width="8" height="7" viewBox="0 0 8 7">
 						<line x1="0" y1="0" x2="8" y2="7" stroke="currentColor" stroke-width="1.5" />
 						<line x1="8" y1="0" x2="0" y2="7" stroke="currentColor" stroke-width="1.5" />
@@ -141,6 +165,10 @@
 		height: max-content;
 		min-width: 200px;
 		min-height: 80px;
+	}
+
+	.win95-window.minimized {
+		display: none;
 	}
 
 	.win95-window.maximized {

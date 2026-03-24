@@ -1,3 +1,5 @@
+import { buildWindows } from './programs.svelte';
+
 export interface Win95Window {
 	id: string;
 	title: string;
@@ -6,6 +8,10 @@ export interface Win95Window {
 	maximized: boolean;
 	/** Whether the window can be maximized on desktop */
 	maximizable: boolean;
+	/** Whether the window can be closed (removed from taskbar) */
+	closable: boolean;
+	/** Whether a closable window is currently "open" (shown in taskbar, even if minimized) */
+	running: boolean;
 	x: number;
 	y: number;
 	zIndex: number;
@@ -22,8 +28,8 @@ let saveTimer: ReturnType<typeof setTimeout> | null = null;
 function scheduleSave(windows: Win95Window[]) {
 	if (saveTimer !== null) clearTimeout(saveTimer);
 	saveTimer = setTimeout(() => {
-		const data = windows.map(({ id, visible, maximized, x, y, prevX, prevY }) => ({
-			id, visible, maximized, x, y, prevX, prevY
+		const data = windows.map(({ id, visible, maximized, x, y, prevX, prevY, closable }) => ({
+			id, visible, maximized, x, y, prevX, prevY, closable
 		}));
 		localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 	}, 800);
@@ -36,14 +42,7 @@ function randomPos(maxW: number, maxH: number, winW = 520, winH = 380) {
 }
 
 function createWindowsState() {
-	let windows = $state<Win95Window[]>([
-		{ id: 'home', title: 'About', icon: 'ℹ️', visible: false, maximized: false, maximizable: false, x: 0, y: 0, zIndex: 10, prevX: 0, prevY: 0 },
-		{ id: 'hybrid-diagrams', title: 'Mechanical Diagrams',  icon: '⚙️', visible: true,  maximized: false, maximizable: true,  x: 0, y: 0, zIndex: 10, prevX: 0, prevY: 0 },
-		{ id: 'converters',      title: 'Converters',           icon: '🔄', visible: true,  maximized: false, maximizable: false, x: 0, y: 0, zIndex: 10, prevX: 0, prevY: 0 },
-		{ id: 'game-of-life',   title: 'Game of Life',         icon: '🧬', visible: true,  maximized: false, maximizable: true,  x: 0, y: 0, zIndex: 10, prevX: 0, prevY: 0 },
-		{ id: 'image-convert',  title: 'Image Conversion',     icon: '🎨', visible: true,  maximized: false, maximizable: true,  x: 0, y: 0, zIndex: 10, prevX: 0, prevY: 0 },
-		{ id: 'wallpaper',      title: 'Wallpaper',            icon: '🖼️', visible: false, maximized: false, maximizable: false, x: 0, y: 0, zIndex: 10, prevX: 0, prevY: 0 }
-	]);
+	let windows = $state<Win95Window[]>(buildWindows());
 
 	let mobile = $state(false);
 
@@ -81,8 +80,9 @@ function createWindowsState() {
 						for (const w of windows) {
 							const s = data.find((d) => d.id === w.id);
 							if (s) {
-								w.visible = s.visible;
-								w.maximized = s.maximized;
+								// closable windows start hidden on reload
+								w.visible = w.closable ? false : s.visible;
+							w.maximized = (w.closable || !w.maximizable) ? false : s.maximized;
 								w.x = s.x;
 								w.y = s.y;
 								w.prevX = s.prevX;
@@ -139,7 +139,7 @@ function createWindowsState() {
 
 		toggleMaximize(id: string) {
 			const w = windows.find((w) => w.id === id);
-			if (!w) return;
+			if (!w || !w.maximizable) return;
 			if (w.maximized) {
 				// Restore
 				w.maximized = false;
@@ -218,6 +218,48 @@ function createWindowsState() {
 
 		isVisible(id: string): boolean {
 			return windows.find((w) => w.id === id)?.visible ?? false;
+		},
+
+		/** Close a closable window (hides it and resets position) */
+		close(id: string) {
+			const w = windows.find((w) => w.id === id);
+			if (!w || !w.closable) return;
+			w.visible = false;
+			w.maximized = false;
+			w.running = false;
+			if (mobile) {
+				const home = windows.find((w) => w.id === 'home');
+				if (home) {
+					home.visible = true;
+					home.maximized = true;
+					home.x = 0;
+					home.y = 0;
+					home.zIndex = nextZ++;
+				}
+			} else {
+				scheduleSave(windows);
+			}
+		},
+
+		/** Open a closable window with a random position */
+		open(id: string) {
+			if (mobile) {
+				this.showExclusive(id);
+				return;
+			}
+			const w = windows.find((w) => w.id === id);
+			if (!w) return;
+			if (!w.visible) {
+				const dw = window.innerWidth;
+				const dh = window.innerHeight - 32;
+				const p = randomPos(dw, dh);
+				w.x = p.x;
+				w.y = p.y;
+			}
+			w.visible = true;
+			w.running = true;
+			w.zIndex = nextZ++;
+			scheduleSave(windows);
 		},
 
 		/** Update titles when language changes */

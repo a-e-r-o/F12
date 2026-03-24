@@ -122,6 +122,59 @@ a {
 	}
 }
 
+/* --- Win95 input (sunken text field) --------------- */
+.win95-input {
+	padding: 3px 4px;
+	border: 2px solid;
+	border-color: var(--win95-border-dark) var(--win95-border-light) var(--win95-border-light) var(--win95-border-dark);
+	box-shadow: inset 1px 1px 0 var(--win95-border-darkest);
+	font-size: 12px;
+	background: #ffffff;
+	color: var(--color-text);
+	width: 100%;
+	box-sizing: border-box;
+	font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* --- Converter card shared styles ------------------- */
+.converter-card {
+	padding: 8px 12px;
+	width: 100%;
+	background: var(--win95-surface);
+}
+
+.converter-card h2 {
+	margin: 0 0 8px;
+	font-size: 13px;
+	color: var(--color-text);
+	font-weight: bold;
+}
+
+.converter-fields {
+	display: flex;
+	align-items: flex-end;
+	gap: 8px;
+}
+
+.converter-label {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	flex: 1;
+}
+
+.converter-label span {
+	font-size: 11px;
+	color: var(--color-text);
+}
+
+.converter-arrow {
+	font-size: 14px;
+	padding-bottom: 4px;
+	color: var(--color-text-secondary);
+	user-select: none;
+}
+
 /* --- Global focus ring for interactive elements --- */
 input:focus,
 select:focus,

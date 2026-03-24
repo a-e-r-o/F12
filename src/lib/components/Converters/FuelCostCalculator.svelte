@@ -89,10 +89,11 @@
 		</button>
 	</div>
 
-	<div class="fields">
-		<label>
+	<div class="converter-fields">
+		<label class="converter-label">
 			<span>{metric ? i18n.t('converters.eurPerLiter') : i18n.t('converters.usdPerGallon')}</span>
 			<input
+				class="win95-input"
 				type="number"
 				min="0"
 				step="0.01"
@@ -104,9 +105,10 @@
 
 		<span class="sep">×</span>
 
-		<label>
+		<label class="converter-label">
 			<span>{metric ? i18n.t('converters.lper100') : i18n.t('converters.mpg')}</span>
 			<input
+				class="win95-input"
 				type="number"
 				min="0"
 				step="any"
@@ -118,9 +120,10 @@
 	</div>
 
 	<div class="bottom-row">
-		<label class="label-distance">
+		<label class="converter-label label-distance">
 			<span>{metric ? i18n.t('converters.fuelCostDistance') : i18n.t('converters.fuelCostDistanceMi')}</span>
 			<input
+				class="win95-input"
 				type="number"
 				min="1"
 				step="1"
@@ -148,19 +151,6 @@
 </div>
 
 <style>
-	.converter-card {
-		padding: 8px 12px;
-		width: 100%;
-		background: var(--win95-surface);
-	}
-
-	h2 {
-		margin: 0 0 8px;
-		font-size: 13px;
-		color: var(--color-text);
-		font-weight: bold;
-	}
-
 	.toggle-bar {
 		display: flex;
 		gap: 4px;
@@ -193,24 +183,6 @@
 		}
 	}
 
-	.fields {
-		display: flex;
-		align-items: flex-end;
-		gap: 8px;
-	}
-
-	label {
-		display: flex;
-		flex-direction: column;
-		gap: 2px;
-		flex: 1;
-
-		span {
-			font-size: 11px;
-			color: var(--color-text);
-		}
-	}
-
 	.label-distance {
 		flex: 0 0 90px;
 	}
@@ -220,19 +192,6 @@
 		align-items: flex-end;
 		gap: 8px;
 		margin-top: 10px;
-	}
-
-	input {
-		padding: 3px 4px;
-		border: 2px solid;
-		border-color: var(--win95-border-dark) var(--win95-border-light) var(--win95-border-light) var(--win95-border-dark);
-		box-shadow: inset 1px 1px 0 var(--win95-border-darkest);
-		font-size: 12px;
-		background: #ffffff;
-		color: var(--color-text);
-		width: 100%;
-		box-sizing: border-box;
-		font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 	}
 
 	.sep {

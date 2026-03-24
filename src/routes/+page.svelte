@@ -20,8 +20,8 @@
 
 <!-- Hybrid Diagrams window -->
 <Win95Window id="hybrid-diagrams" title={i18n.t('nav.hybridDiagrams')} icon="⚙️">
-	{#await import('$lib/components/GearsSvg.svelte') then { default: GearsSvg }}
-		{#await import('$lib/components/GaugeCanvas.svelte') then { default: GaugeCanvas }}
+	{#await import('$lib/components/HybridDiagrams/GearsSvg.svelte') then { default: GearsSvg }}
+		{#await import('$lib/components/HybridDiagrams/GaugeCanvas.svelte') then { default: GaugeCanvas }}
 			<div class="diagrams-content">
 				<h3>{i18n.t('gearsSvg.title')}</h3>
 				<GearsSvg />
@@ -33,9 +33,9 @@
 
 <!-- Converters window -->
 <Win95Window id="converters" title={i18n.t('nav.converters')} icon="🔄">
-	{#await import('$lib/components/MpgConverter.svelte') then { default: MpgConverter }}
-		{#await import('$lib/components/FuelPriceConverter.svelte') then { default: FuelPriceConverter }}
-			{#await import('$lib/components/FuelCostCalculator.svelte') then { default: FuelCostCalculator }}
+	{#await import('$lib/components/Converters/MpgConverter.svelte') then { default: MpgConverter }}
+		{#await import('$lib/components/Converters/FuelPriceConverter.svelte') then { default: FuelPriceConverter }}
+			{#await import('$lib/components/Converters/FuelCostCalculator.svelte') then { default: FuelCostCalculator }}
 				<div class="converters-content">
 					<h3>{i18n.t('converters.title')}</h3>
 					<MpgConverter />
@@ -54,13 +54,38 @@
 
 <!-- Image Convert window -->
 <Win95Window id="image-convert" title={i18n.t('nav.imgConvert')} icon="🎨">
-	<div class="placeholder-content">TODO</div>
+	{#await import('$lib/components/Converters/PngToIco.svelte') then { default: PngToIco }}
+		<div class="image-convert-content">
+			<PngToIco />
+		</div>
+	{/await}
 </Win95Window>
 
 <!-- Wallpaper window -->
 <Win95Window id="wallpaper" title={i18n.locale === 'fr' ? "Fond d'écran" : 'Wallpaper'} icon="🖼️">
-	{#await import('$lib/components/WallpaperPicker.svelte') then { default: WallpaperPicker }}
+	{#await import('$lib/components/Wallpaper/WallpaperPicker.svelte') then { default: WallpaperPicker }}
 		<WallpaperPicker />
+	{/await}
+</Win95Window>
+
+<!-- Minesweeper window -->
+<Win95Window id="minesweeper" title={i18n.t('startMenu.minesweeper')} icon="💣">
+	{#await import('$lib/components/Minesweeper/Minesweeper.svelte') then { default: Minesweeper }}
+		<Minesweeper />
+	{/await}
+</Win95Window>
+
+<!-- Tetris window -->
+<Win95Window id="tetris" title={i18n.t('startMenu.tetris')} icon="🧱">
+	{#await import('$lib/components/Tetris/Tetris.svelte') then { default: Tetris }}
+		<Tetris />
+	{/await}
+</Win95Window>
+
+<!-- Pokémon Quiz window -->
+<Win95Window id="pokemon-quiz" title={i18n.t('startMenu.pokemonQuiz')} icon="❓">
+	{#await import('$lib/components/PokemonQuiz/PokemonQuiz.svelte') then { default: PokemonQuiz }}
+		<PokemonQuiz />
 	{/await}
 </Win95Window>
 
@@ -104,6 +129,14 @@
 	.converters-content h3 {
 		font-size: 13px;
 		font-weight: bold;
+	}
+
+	.image-convert-content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 12px;
+		padding: 8px;
 	}
 
 	.placeholder-content {
