@@ -3,7 +3,7 @@ import { buildWindows } from './programs.svelte';
 export interface Win95Window {
 	id: string;
 	title: string;
-	icon: string;
+	iconKey: string;
 	visible: boolean;
 	maximized: boolean;
 	/** Whether the window can be maximized on desktop */

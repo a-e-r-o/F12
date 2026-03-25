@@ -3,3 +3,4 @@ export { gears, sunMin, sunMax, carrierMin, carrierMax, RPM_FACTOR, MAX_SPEED_KM
 export { i18n, type Locale, locales } from './i18n.svelte';
 export { windowsState } from './windows.svelte';
 export { programs, type ProgramDef } from './programs.svelte';
+export { themeState, type ThemeId } from './theme.svelte';
