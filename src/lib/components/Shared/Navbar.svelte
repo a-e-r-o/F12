@@ -4,7 +4,6 @@
 	import { navbar } from '$lib/stores';
 	import { i18n } from '$lib/stores/i18n.svelte';
 	import LanguageSwitcher from './LanguageSwitcher.svelte';
-	import CrtToggle from './CrtToggle.svelte';
 
 	let elapsed = $state(0);
 
@@ -84,13 +83,14 @@
 	<div class="sidebar-footer">
 		<div class="footer-buttons">
 			<div class="timer">⏱ {formatTime(elapsed)}</div>
-			<CrtToggle />
 			<LanguageSwitcher />
 		</div>
 	</div>
 </nav>
 
 <style>
+	/* CSS refactorisé : nesting appliqué */
+
 	/* --- Sidebar -------------------------------- */
 	.sidebar {
 		position: fixed;
@@ -114,103 +114,103 @@
 		&.open {
 			transform: translateX(0);
 		}
-	}
 
-	.sidebar-header {
-		padding: 2rem 1.5rem 8rem 2rem;
-		position: relative;
-		height: 6rem;
-		background-image: linear-gradient(
-			to right,
-			var(--header-gradient-from) 0%,
-			var(--header-gradient-to) 100%
-		);
-		transition: background-image 0.3s ease;
+		.sidebar-header {
+			padding: 2rem 1.5rem 8rem 2rem;
+			position: relative;
+			height: 6rem;
+			background-image: linear-gradient(
+				to right,
+				var(--header-gradient-from) 0%,
+				var(--header-gradient-to) 100%
+			);
+			transition: background-image 0.3s ease;
 
-		&::after {
-			content: '';
-			position: absolute;
-			left: 0;
-			top: 6rem;
-			width: 100%;
-			height: 4rem;
-			background-color: var(--glass-surface-strong);
-			-webkit-mask-image: linear-gradient(to bottom, transparent, black);
-			mask-image: linear-gradient(to bottom, transparent, black);
-			transition: background-color 0.3s ease;
-		}
-	}
-
-	.logo {
-		font-size: 2.5rem;
-		font-weight: 800;
-		font-family: 'Fredoka', 'Baloo 2', 'Nunito', system-ui, sans-serif;
-		color: var(--color-primary);
-		letter-spacing: 0.05em;
-	}
-
-	.nav-list {
-		list-style: none;
-		padding: 1rem 0;
-		flex: 1;
-
-		li a {
-			display: flex;
-			align-items: center;
-			gap: 0.85rem;
-			padding: 0.8rem 1.5rem;
-			text-decoration: none;
-			color: var(--color-text-secondary);
-			font-size: 0.95rem;
-			border-left: 3px solid transparent;
-			transition: all 0.15s ease;
-
-			&:hover {
-				background: color-mix(in srgb, var(--glass-surface) 86%, transparent);
-				color: var(--color-text);
+			&::after {
+				content: '';
+				position: absolute;
+				left: 0;
+				top: 6rem;
+				width: 100%;
+				height: 4rem;
+				background-color: var(--glass-surface-strong);
+				-webkit-mask-image: linear-gradient(to bottom, transparent, black);
+				mask-image: linear-gradient(to bottom, transparent, black);
+				transition: background-color 0.3s ease;
 			}
 
-			&.active {
+			.logo {
+				font-size: 2.5rem;
+				font-weight: 800;
+				font-family: 'Fredoka', 'Baloo 2', 'Nunito', system-ui, sans-serif;
 				color: var(--color-primary);
-				border-left-color: var(--color-primary);
-				background: color-mix(in srgb, var(--glass-surface) 92%, transparent);
-				font-weight: 600;
+				letter-spacing: 0.05em;
 			}
 		}
-	}
 
-	.nav-icon {
-		font-size: 1.15rem;
-		width: 1.5rem;
-		text-align: center;
-	}
+		.nav-list {
+			list-style: none;
+			padding: 1rem 0;
+			flex: 1;
 
-	.sidebar-footer {
-		padding: 1rem 1.25rem;
-		border-top: 1px solid var(--ui-border);
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 0.75rem;
-	}
+			li a {
+				display: flex;
+				align-items: center;
+				gap: 0.85rem;
+				padding: 0.8rem 1.5rem;
+				text-decoration: none;
+				color: var(--color-text-secondary);
+				font-size: 0.95rem;
+				border-left: 3px solid transparent;
+				transition: all 0.15s ease;
 
-	.footer-buttons {
-		display: flex;
-		gap: 0.75rem;
-		align-items: center;
-	}
+				&:hover {
+					background: color-mix(in srgb, var(--glass-surface) 86%, transparent);
+					color: var(--color-text);
+				}
 
-	.timer {
-		background: color-mix(in srgb, var(--glass-surface-strong) 94%, transparent);
-		color: var(--color-text);
-		border: 1px solid var(--ui-border);
-		height: 2.25rem;
-		padding: 0.3rem 0.75rem;
-		border-radius: 20px;
-		font-size: 0.85rem;
-		font-family: monospace;
-		box-shadow: inset 0 1px 0 var(--glass-highlight);
-		transition: background-color 0.3s, color 0.3s;
+				&.active {
+					color: var(--color-primary);
+					border-left-color: var(--color-primary);
+					background: color-mix(in srgb, var(--glass-surface) 92%, transparent);
+					font-weight: 600;
+				}
+
+				.nav-icon {
+					font-size: 1.15rem;
+					width: 1.5rem;
+					text-align: center;
+				}
+			}
+		}
+
+		.sidebar-footer {
+			padding: 1rem 1.25rem;
+			border-top: 1px solid var(--ui-border);
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 0.75rem;
+
+			.footer-buttons {
+				display: flex;
+				gap: 0.75rem;
+				align-items: center;
+
+				.timer {
+					background: color-mix(in srgb, var(--glass-surface-strong) 94%, transparent);
+					color: var(--color-text);
+					border: 1px solid var(--ui-border);
+					height: 2.25rem;
+					padding: 0.3rem 0.75rem;
+					border-radius: 20px;
+					font-size: 0.85rem;
+					font-family: monospace;
+					box-shadow: inset 0 1px 0 var(--glass-highlight);
+					transition: background-color 0.3s, color 0.3s;
+				}
+			}
+		}
 	}
 
 	/* --- Hamburger tab (position:fixed, slides with sidebar) --- */

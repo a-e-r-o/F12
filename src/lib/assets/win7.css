@@ -1,0 +1,147 @@
+/* === WIN7 AERO OVERRIDES =============================== */
+
+[data-theme="win7aero"] {
+	& body {
+		font-family: 'Segoe UI', 'Segoe UI Web', Arial, sans-serif;
+		font-size: 12px;
+	}
+
+	/* --- Buttons --- */
+	& .win95-btn {
+		border: 1px solid #8e8f8f;
+		border-radius: 3px;
+		background: linear-gradient(#f2f2f2 45%, #ebebeb 45%, #cfcfcf);
+		box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+		padding: 0 12px;
+		font-family: 'Segoe UI', Arial, sans-serif;
+		font-size: 12px;
+		color: #000;
+		min-height: 23px;
+		position: relative;
+
+		&:hover {
+			background: linear-gradient(#eaf6fd 45%, #bee6fd 45%, #a7d9f5);
+			border-color: #3c7fb1;
+			box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+		}
+
+		&:active {
+			background: linear-gradient(#e5f4fc, #c4e5f6 30% 50%, #98d1ef 50%, #68b3db);
+			border-color: #6d91ab;
+			padding: 0 12px;
+			box-shadow: inset 1px 1px 0 rgba(0, 0, 0, 0.2);
+		}
+	}
+
+	& .win95-btn-pressed {
+		border: 1px solid #6d91ab;
+		border-radius: 3px;
+		background: linear-gradient(#e5f4fc, #c4e5f6 30% 50%, #98d1ef 50%, #68b3db);
+		box-shadow: inset 1px 1px 0 rgba(0, 0, 0, 0.2);
+		padding: 0 12px;
+		font-family: 'Segoe UI', Arial, sans-serif;
+		font-size: 12px;
+		color: #000;
+		min-height: 23px;
+		cursor: pointer;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	/* --- Raised / Sunken panels --- */
+	& .win95-raised {
+		border: 1px solid #c0c0c0;
+		border-radius: 3px;
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+		background: var(--win-surface);
+	}
+
+	& .win95-sunken {
+		border: 1px solid #c0c0c0;
+		border-radius: 3px;
+		box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+		background: #ffffff;
+	}
+
+	/* --- Input --- */
+	& .win95-input {
+		border: 1px solid;
+		border-color: #abadb3 #dbdfe6 #e3e9ef #e2e3ea;
+		border-radius: 2px;
+		padding: 3px 4px 5px;
+		box-shadow: none;
+		background: #fff;
+		font-family: 'Segoe UI', Arial, sans-serif;
+		font-size: 12px;
+		height: 23px;
+		transition: border-color 0.5s;
+
+		&:hover {
+			border-color: #5794bf #b7d5ea #c7e2f1 #c5daed;
+			transition-duration: 0.3s;
+		}
+
+		&:focus {
+			border-color: #3d7bad #a4c9e3 #b7d9ed #b5cfe7;
+			box-shadow: none;
+			outline: none;
+		}
+	}
+
+	/* --- Focus ring --- */
+	& input:focus,
+	& select:focus,
+	& textarea:focus {
+		outline: none;
+		border-color: #3d7bad #a4c9e3 #b7d9ed #b5cfe7;
+		box-shadow: none;
+	}
+
+	/* --- Converter card --- */
+	& .converter-card {
+		background: #ffffff;
+		border-radius: 4px;
+		border: 1px solid #d5d5d5;
+		padding: 10px 14px;
+	}
+
+	.task-btn {
+		height: 38px;
+		border: 1px solid transparent;
+		border-radius: 2px;
+		padding: 0;
+		justify-content: center;
+		transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+		position: relative;
+
+		&:hover:not(.active) {
+			background:
+				radial-gradient(circle at bottom, rgba(191,220,250,0.667) 5%, transparent 15%),
+				radial-gradient(circle at 0 50%, rgba(0,0,0,0.33), transparent),
+				radial-gradient(circle at 100% 50%, rgba(0,0,0,0.33), transparent),
+				radial-gradient(circle at 0 50%, rgba(255,255,255,0.33), transparent),
+				radial-gradient(circle at 100% 50%, rgba(255,255,255,0.33), transparent);
+			background-size: 100%, 1px, 1px, 1px, 1px, 100%;
+			background-repeat: no-repeat;
+			background-position-x: center, 0, calc(100% - 1px), 1px, 100%, center;
+		}
+
+		&.active {
+			border-color: rgba(0,0,0,0.53);
+			box-shadow: inset 0 0 0 1px rgba(255,255,255,0.667);
+			background:
+				linear-gradient(155deg, rgba(255,255,255,0.667), rgba(255,255,255,0) 40%),
+				radial-gradient(ellipse at bottom right, transparent, rgba(0,0,0,0.067) 64%, transparent 65%),
+				linear-gradient(rgba(255,255,255,0.53), rgba(255,255,255,0.13) 60%, rgba(255,255,255,0.6));
+			background-image: none;
+			background-size: unset;
+		}
+
+		&.active:hover {
+			background-color: rgba(255,255,255,0.33);
+		}
+
+
+	}
+}

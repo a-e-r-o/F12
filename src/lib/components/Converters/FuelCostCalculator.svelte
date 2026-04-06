@@ -81,10 +81,10 @@
 
 	<!-- Mode toggle -->
 	<div class="toggle-bar">
-		<button class="toggle-btn" class:active={metric} onclick={() => switchMode(true)}>
+		<button class={metric ? 'win95-btn-pressed toggle-btn' : 'win95-btn toggle-btn'} onclick={() => switchMode(true)}>
 			{i18n.t('converters.fuelCostMetricMode')}
 		</button>
-		<button class="toggle-btn" class:active={!metric} onclick={() => switchMode(false)}>
+		<button class={!metric ? 'win95-btn-pressed toggle-btn' : 'win95-btn toggle-btn'} onclick={() => switchMode(false)}>
 			{i18n.t('converters.fuelCostImperialMode')}
 		</button>
 	</div>
@@ -133,7 +133,7 @@
 			/>
 		</label>
 
-		<div class="result" class:has-value={result !== null}>
+		<div class="result win95-sunken" class:has-value={result !== null}>
 			<span class="result-label">
 				{metric
 					? i18n.t('converters.fuelCostResult', { distance: distance.toString() })
@@ -156,30 +156,10 @@
 		gap: 4px;
 		margin-bottom: 10px;
 		width: fit-content;
-	}
 
-	.toggle-btn {
-		display: flex;
-		align-items: center;
-		height: 24px;
-		padding: 2px 10px;
-		font-size: 11px;
-		font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-		cursor: pointer;
-		background: var(--win95-btn-face);
-		color: #000000;
-		border: 2px solid;
-		border-color: var(--win95-border-light) var(--win95-border-darkest) var(--win95-border-darkest) var(--win95-border-light);
-		box-shadow: inset 1px 1px 0 var(--win95-border-mid), inset -1px -1px 0 var(--win95-border-dark);
-		user-select: none;
-		white-space: nowrap;
-
-		&.active {
-			border-color: var(--win95-border-darkest) var(--win95-border-light) var(--win95-border-light) var(--win95-border-darkest);
-			box-shadow: inset 1px 1px 0 var(--win95-border-dark), inset -1px -1px 0 var(--win95-border-mid);
-			font-weight: bold;
-			background-image: url("data:image/svg+xml,%3Csvg width='2' height='2' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='1' height='1' fill='%23c0c0c0'/%3E%3Crect x='1' y='1' width='1' height='1' fill='%23c0c0c0'/%3E%3Crect x='1' y='0' width='1' height='1' fill='%23ffffff'/%3E%3Crect x='0' y='1' width='1' height='1' fill='%23ffffff'/%3E%3C/svg%3E");
-			background-size: 2px 2px;
+		.toggle-btn {
+			user-select: none;
+			white-space: nowrap;
 		}
 	}
 
@@ -208,25 +188,21 @@
 		justify-content: space-between;
 		flex: 1;
 		padding: 0 8px;
-		border: 2px solid;
-		border-color: var(--win95-border-dark) var(--win95-border-light) var(--win95-border-light) var(--win95-border-dark);
-		box-shadow: inset 1px 1px 0 var(--win95-border-darkest);
-		background: var(--win95-surface);
-	}
 
-	.result-label {
-		font-size: 11px;
-		color: var(--color-text-secondary);
-	}
+		.result-label {
+			font-size: 11px;
+			color: var(--color-text-secondary);
+		}
 
-	.result-value {
-		font-size: 15px;
-		font-weight: bold;
-		color: var(--color-text);
-		letter-spacing: 0.5px;
-	}
+		.result-value {
+			font-size: 15px;
+			font-weight: bold;
+			color: var(--color-text);
+			letter-spacing: 0.5px;
+		}
 
-	.result.has-value .result-value {
-		color: var(--win95-titlebar-active, #000080);
+		&.has-value .result-value {
+			color: var(--win95-titlebar-active, #000080);
+		}
 	}
 </style>

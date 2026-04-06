@@ -492,300 +492,286 @@
 </div>
 
 <style>
-	/* --- Layout & typography ------------------ */
-
-	.whole-diagram-wrapper {
-		display: flex;
-		flex-direction: row;
-		align-items: flex-start;
-		gap: 1.5rem;
-		padding: 1.25rem;
-		align-items: center;
-    	justify-content: center;
-		border-radius: 24px;
-		width: max-content;
-	}
+	/* CSS refactorisé : nesting appliqué */
 
 	.gears-svg {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-	}
 
-	/* --- SVG diagram and indicators ----------- */
+		/* --- Layout -------------------------------- */
+		.whole-diagram-wrapper {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: center;
+			gap: 1.5rem;
+			padding: 1.25rem;
+			border-radius: 24px;
+			width: max-content;
 
-	.diagram-area {
-		position: relative;
-		flex-shrink: 0;
-		width: fit-content;
-	}
+			/* --- Controls (sliders) ---------------- */
+			.controls {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 1rem;
+				flex-shrink: 0;
 
-	.gear-diagram {
-		max-width: 100%;
-		height: auto;
-		display: block;
-	}
+				.sliders-area {
+					display: flex;
+					flex-direction: row;
+					gap: 12px; /* = colGap in script */
+					position: relative;
+					align-items: flex-start;
 
-	.gear {
-		stroke: var(--color-text);
-		stroke-width: 1.5;
+					.thumb-connector {
+						position: absolute;
+						left: 0;
+						pointer-events: none;
+						z-index: 5;
 
-		&.sun {
-			fill: var(--gear-sun);
+						.connector-line {
+							stroke: var(--color-text-secondary);
+							stroke-width: 2;
+							stroke-linecap: round;
+							opacity: 0.6;
+						}
+
+						.connector-line-ring {
+							stroke-dasharray: 4 3;
+							opacity: 0.35;
+						}
+					}
+
+					.slider-col {
+						display: flex;
+						flex-direction: column;
+						align-items: center;
+						gap: 4px;
+						width: 50px; /* = colW in script */
+
+						strong {
+							font-size: 0.8rem;
+							color: var(--color-text);
+							text-align: center;
+						}
+
+						.slider-label {
+							font-size: 0.7rem;
+							color: var(--color-text-secondary);
+							text-align: center;
+							height: 24px; /* = labelH in script */
+							line-height: 24px;
+							white-space: nowrap;
+						}
+
+						.slider-wrapper {
+							position: relative;
+							width: 20px;
+							height: 200px; /* = sliderH in script */
+							display: flex;
+							align-items: center;
+							justify-content: center;
+							overflow: visible;
+
+							&.sun { accent-color: var(--gear-sun); }
+							&.planet { accent-color: var(--gear-planet); }
+							&.ring { accent-color: var(--gear-ring); }
+
+							input[type='range'] {
+								writing-mode: vertical-lr;
+								direction: rtl;
+								width: 20px;
+								height: 200px; /* = sliderH in script */
+								margin: 0;
+								cursor: pointer;
+							}
+
+							.zero-indicator {
+								position: absolute;
+								top: calc(var(--zero-pct) * (200px - 20px) / 100 + 10px);
+								left: 50%;
+								transform: translateX(-50%) translateY(-50%);
+								width: 18px;
+								height: 3px;
+								background-color: var(--color-text-secondary);
+								opacity: 0.8;
+								pointer-events: none;
+								border-radius: 1px;
+								z-index: 10;
+							}
+						}
+
+						&.ring-col .slider-wrapper input[type='range']:disabled {
+							accent-color: var(--gear-ring);
+							cursor: default;
+							opacity: 0.7;
+						}
+					}
+				}
+
+				.hint {
+					font-size: 0.8rem;
+					color: var(--color-text-secondary);
+				}
+			}
+
+			/* --- SVG diagram and indicators -------- */
+			.diagram-area {
+				position: relative;
+				flex-shrink: 0;
+				width: fit-content;
+
+				.gear-diagram {
+					max-width: 100%;
+					height: auto;
+					display: block;
+				}
+
+				.gear {
+					stroke: var(--color-text);
+					stroke-width: 1.5;
+
+					&.sun { fill: var(--gear-sun); }
+					&.planet { fill: var(--gear-planet); }
+					&.ring {
+						fill: var(--gear-ring);
+						stroke: var(--color-text);
+						stroke-width: 1;
+					}
+					&.carrier {
+						fill: var(--gear-carrier);
+						opacity: 0.4;
+					}
+				}
+
+				.hub {
+					fill: var(--color-bg-secondary);
+					stroke: var(--color-text);
+					stroke-width: 2;
+				}
+
+				.indicator {
+					fill: var(--indicator-fill);
+					opacity: 0.9;
+
+					&.carrier-indicator {
+						fill: var(--indicator-carrier);
+						opacity: 0.8;
+					}
+				}
+
+				/* --- Gear popup / tooltip ---------- */
+				.gear-interactive {
+					cursor: pointer;
+				}
+
+				.gear-highlighted {
+					path,
+					circle:not([fill='transparent']) {
+						filter: brightness(1.15);
+					}
+				}
+
+				.gear-popup {
+					position: absolute;
+					top: 1rem;
+					left: 0;
+					width: 260px;
+					padding: 8px;
+					background: var(--win95-surface);
+					border: 2px solid var(--popup-color);
+					box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+					color: var(--color-text);
+					animation: popup-in 0.15s ease;
+					z-index: 20;
+					pointer-events: none;
+
+					strong {
+						display: block;
+						margin-bottom: 0.5rem;
+						font-size: 0.95rem;
+						color: var(--popup-color);
+					}
+
+					p {
+						font-size: 0.82rem;
+						line-height: 1.5;
+						color: var(--color-text-secondary);
+						margin: 0 0 0.4rem;
+					}
+
+					@media (max-width: 900px) {
+						position: static;
+						width: auto;
+						margin-top: 0.75rem;
+						align-self: stretch;
+					}
+				}
+
+				@media (max-width: 900px) {
+					display: flex;
+					flex-direction: column;
+				}
+			}
 		}
 
-		&.planet {
-			fill: var(--gear-planet);
-		}
-
-		&.ring {
-			fill: var(--gear-ring);
-			stroke: var(--color-text);
-			stroke-width: 1;
-		}
-
-		&.carrier {
-			fill: var(--gear-carrier);
-			opacity: 0.4;
-		}
-	}
-
-	.hub {
-		fill: var(--color-bg-secondary);
-		stroke: var(--color-text);
-		stroke-width: 2;
-	}
-
-	.indicator {
-		fill: var(--indicator-fill);
-		opacity: 0.9;
-
-		&.carrier-indicator {
-			fill: var(--indicator-carrier);
-			opacity: 0.8;
-		}
-	}
-
-	/* --- Controls (sliders) ------------------ */
-
-	.controls {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 1rem;
-		flex-shrink: 0;
-	}
-
-	.sliders-area {
-		display: flex;
-		flex-direction: row;
-		gap: 12px; /* = colGap in script */
-		position: relative;
-		align-items: flex-start;
-	}
-
-	.slider-col {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 4px;
-		width: 50px; /* = colW in script */
-
-		strong {
-			font-size: 0.8rem;
-			color: var(--color-text);
-			text-align: center;
-		}
-	}
-
-	.slider-label {
-		font-size: 0.7rem;
-		color: var(--color-text-secondary);
-		text-align: center;
-		height: 24px; /* = labelH in script */
-		line-height: 24px;
-		white-space: nowrap;
-	}
-
-	.slider-wrapper {
-		position: relative;
-		width: 20px;
-		height: 200px; /* = sliderH in script */
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		overflow: visible;
-
-		&.sun {
-			accent-color: var(--gear-sun);
-		}
-		&.planet {
-			accent-color: var(--gear-planet);
-		}
-		&.ring {
-			accent-color: var(--gear-ring);
-		}
-
-		input[type='range'] {
-			writing-mode: vertical-lr;
-			direction: rtl;
-			width: 20px;
-			height: 200px; /* = sliderH in script */
-			margin: 0;
-			cursor: pointer;
-		}
-	}
-
-	.ring-col .slider-wrapper input[type='range']:disabled {
-		accent-color: var(--gear-ring);
-		cursor: default;
-		opacity: 0.7;
-	}
-	.zero-indicator {
-		position: absolute;
-		top: calc(var(--zero-pct) * (200px - 20px) / 100 + 10px);
-		left: 50%;
-		transform: translateX(-50%) translateY(-50%);
-		width: 18px;
-		height: 3px;
-		background-color: var(--color-text-secondary);
-		opacity: 0.8;
-		pointer-events: none;
-		border-radius: 1px;
-		z-index: 10;
-	}
-
-	.thumb-connector {
-		position: absolute;
-		left: 0;
-		pointer-events: none;
-		z-index: 5;
-	}
-
-	.connector-line {
-		stroke: var(--color-text-secondary);
-		stroke-width: 2;
-		stroke-linecap: round;
-		opacity: 0.6;
-	}
-
-	.connector-line-ring {
-		stroke-dasharray: 4 3;
-		opacity: 0.35;
-	}
-
-	.hint {
-		font-size: 0.8rem;
-		color: var(--color-text-secondary);
-	}
-
-	/* --- Gear popup / tooltip ----------------- */
-
-	.gear-interactive {
-		cursor: pointer;
-	}
-
-	.gear-highlighted {
-		path,
-		circle:not([fill='transparent']) {
-			filter: brightness(1.15);
-		}
-	}
-
-	.gear-popup {
-		position: absolute;
-		top: 1rem;
-		left: 0; /* overridden immediately by JS $effect */
-		width: 260px;
-		padding: 8px;
-		background: var(--win95-surface);
-		border: 2px solid var(--popup-color);
-		box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
-		color: var(--color-text);
-		animation: popup-in 0.15s ease;
-		z-index: 20;
-		pointer-events: none;
-
-		strong {
-			display: block;
-			margin-bottom: 0.5rem;
-			font-size: 0.95rem;
-			color: var(--popup-color);
-		}
-
-		p {
-			font-size: 0.82rem;
-			line-height: 1.5;
-			color: var(--color-text-secondary);
-			margin: 0 0 0.4rem;
-		}
-	}
-
-	@media (max-width: 900px) {
-		.gear-popup {
-			position: static;
-			width: auto;
-			margin-top: 0.75rem;
-			align-self: stretch;
-		}
-		.diagram-area {
+		/* --- Explanations ----------------------- */
+		.explanations-wrapper {
 			display: flex;
 			flex-direction: column;
-		}
-	}
+			align-items: center;
+			gap: 1rem;
 
-	.explanations-wrapper {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 1rem;
-	}
+			.toggle-explanations {
+				border: none;
+				cursor: pointer;
+				font-size: 0.78rem;
+				color: var(--color-text-secondary);
+				opacity: 0.92;
+				padding: 0.45rem 0.8rem;
+				border-radius: 999px;
+				background: none;
+				transition: opacity 0.15s, border-color 0.15s;
 
-	.toggle-explanations {
-		border: none;
-		cursor: pointer;
-		font-size: 0.78rem;
-		color: var(--color-text-secondary);
-		opacity: 0.92;
-		padding: 0.45rem 0.8rem;
-		border-radius: 999px;
-		background: none;
-		transition: opacity 0.15s, border-color 0.15s;
-		&:hover {
-			opacity: 1;
-			border-color: var(--color-primary);
-		}
-	}
+				&:hover {
+					opacity: 1;
+					border-color: var(--color-primary);
+				}
+			}
 
-	.explanations {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 1rem;
-		justify-content: center;
-		max-width: 860px;
-	}
+			.explanations {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 1rem;
+				justify-content: center;
+				max-width: 860px;
 
-	.explanation-card {
-		width: 260px;
-		padding: 8px;
-		background: var(--win95-surface);
-		border-left: 3px solid var(--popup-color);
-		border: 2px solid;
-		border-color: var(--win95-border-light) var(--win95-border-darkest) var(--win95-border-darkest) var(--win95-border-light);
-		box-shadow: inset 1px 1px 0 var(--win95-border-mid), inset -1px -1px 0 var(--win95-border-dark);
+				.explanation-card {
+					width: 260px;
+					padding: 8px;
+					background: var(--win95-surface);
+					border-left: 3px solid var(--popup-color);
+					border: 2px solid;
+					border-color: var(--win95-border-light) var(--win95-border-darkest) var(--win95-border-darkest) var(--win95-border-light);
+					box-shadow: inset 1px 1px 0 var(--win95-border-mid), inset -1px -1px 0 var(--win95-border-dark);
 
-		strong {
-			display: block;
-			margin-bottom: 0.4rem;
-			font-size: 0.9rem;
-			color: var(--popup-color);
-		}
+					strong {
+						display: block;
+						margin-bottom: 0.4rem;
+						font-size: 0.9rem;
+						color: var(--popup-color);
+					}
 
-		p {
-			font-size: 0.8rem;
-			line-height: 1.5;
-			color: var(--color-text-secondary);
-			margin: 0;
+					p {
+						font-size: 0.8rem;
+						line-height: 1.5;
+						color: var(--color-text-secondary);
+						margin: 0;
+					}
+				}
+			}
 		}
 	}
 </style>

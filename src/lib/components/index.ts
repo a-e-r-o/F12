@@ -1,10 +1,9 @@
 // Shared
-export { default as Win95Window } from './Shared/Win95Window.svelte';
-export { default as Win95Taskbar } from './Shared/Win95Taskbar.svelte';
+export { default as AppWindow } from './Shared/AppWindow.svelte';
+export { default as AppTaskbar } from './Shared/AppTaskbar.svelte';
 export { default as StartMenu } from './Shared/StartMenu.svelte';
 export { default as LanguageSwitcher } from './Shared/LanguageSwitcher.svelte';
 export { default as Navbar } from './Shared/Navbar.svelte';
-export { default as CrtToggle } from './Shared/CrtToggle.svelte';
 export { default as FpsCounter } from './Shared/FpsCounter.svelte';
 
 // HybridDiagrams
@@ -24,3 +23,7 @@ export { default as PokemonQuiz } from './PokemonQuiz/PokemonQuiz.svelte';
 
 // Wallpaper
 export { default as WallpaperPicker } from './Wallpaper/WallpaperPicker.svelte';
+
+// Settings
+export { default as ControlPanel } from './ControlPanel/ControlPanel.svelte';
+export { default as Personalization } from './Personalization/Personalization.svelte';

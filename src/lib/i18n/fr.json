@@ -5,7 +5,9 @@
 		"imgConvert": "Conversion d'images",
 		"gameOfLife": "Jeu de la vie",
 		"converters": "Convertisseurs d'unités",
-		"wallpaper": "Fond d'écran"
+		"wallpaper": "Fond d'écran",
+		"controlPanel": "Panneau de configuration",
+		"personalization": "Personnalisation"
 	},
 	"about": {
 		"welcome": "Bienvenue sur F12",
@@ -335,6 +337,25 @@
 		"generate": "Générer le .ico",
 		"generating": "Génération…",
 		"errorNotPng": "Veuillez sélectionner un fichier PNG.",
-		"errorGeneric": "Erreur lors de la génération du fichier ICO."
+		"errorGeneric": "Erreur lors de la génération du fichier ICO.",
+		"icoToPngTitle": "ICO → PNG",
+		"selectIco": "Choisir un fichier ICO…",
+		"availableSizes": "Tailles disponibles",
+		"downloadAll": "Télécharger tous les PNG",
+		"parsing": "Lecture du fichier ICO…",
+		"errorNotIco": "Veuillez sélectionner un fichier ICO.",
+		"errorParseIco": "Erreur lors de la lecture du fichier ICO."
+	},
+	"controlPanel": {
+		"title": "Panneau de configuration",
+		"personalization": "Personnalisation",
+		"personalizationDesc": "Modifier le thème et le fond d'écran"
+	},
+	"personalization": {
+		"title": "Personnalisation",
+		"theme": "Thème",
+		"wallpaper": "Fond d'écran",
+		"retro": "Rétro",
+		"aero": "Aero"
 	}
 }

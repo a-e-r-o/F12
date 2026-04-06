@@ -5,7 +5,9 @@
 		"imgConvert": "Image Conversion",
 		"gameOfLife": "Game of Life",
 		"converters": "Unit converters",
-		"wallpaper": "Wallpaper"
+		"wallpaper": "Wallpaper",
+		"controlPanel": "Control Panel",
+		"personalization": "Personalization"
 	},
 	"about": {
 		"welcome": "Welcome to F12",
@@ -335,6 +337,25 @@
 		"generate": "Generate .ico",
 		"generating": "Generating…",
 		"errorNotPng": "Please select a PNG file.",
-		"errorGeneric": "Error generating ICO file."
+		"errorGeneric": "Error generating ICO file.",
+		"icoToPngTitle": "ICO → PNG",
+		"selectIco": "Select an ICO file…",
+		"availableSizes": "Available sizes",
+		"downloadAll": "Download all PNGs",
+		"parsing": "Reading ICO file…",
+		"errorNotIco": "Please select an ICO file.",
+		"errorParseIco": "Error reading ICO file."
+	},
+	"controlPanel": {
+		"title": "Control Panel",
+		"personalization": "Personalization",
+		"personalizationDesc": "Change the theme and wallpaper"
+	},
+	"personalization": {
+		"title": "Personalization",
+		"theme": "Theme",
+		"wallpaper": "Wallpaper",
+		"retro": "Retro",
+		"aero": "Aero"
 	}
 }

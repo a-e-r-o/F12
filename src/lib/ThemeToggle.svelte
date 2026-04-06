@@ -32,14 +32,14 @@
 			border-color 0.2s,
 			transform 0.2s;
 		font-size: 1.2rem;
-	}
 
-	.theme-toggle:hover {
-		transform: scale(1.1);
-		border-color: var(--color-primary);
-	}
+		&:hover {
+			transform: scale(1.1);
+			border-color: var(--color-primary);
+		}
 
-	.icon {
-		line-height: 1;
+		.icon {
+			line-height: 1;
+		}
 	}
 </style>

@@ -1,0 +1,39 @@
+/* === BASE RESET & GLOBAL STYLES ======================== */
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+html {
+	color-scheme: light;
+}
+
+body {
+	font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	background-color: var(--color-bg);
+	color: var(--color-text);
+	line-height: 1.4;
+	min-height: 100vh;
+	overflow: hidden;
+	font-size: 12px;
+}
+
+a {
+	color: var(--color-primary);
+
+	&:hover {
+		color: var(--color-primary-hover);
+	}
+}
+
+/* --- Global focus ring for interactive elements --- */
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px dotted #000000;
+	outline-offset: -1px;
+}

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { i18n } from '$lib/stores';
-	import { Win95Window } from '$lib/components';
+	import { AppWindow } from '$lib/components';
 	import { themeState } from '$lib/stores/theme.svelte';
 </script>
 
@@ -9,7 +9,7 @@
 </svelte:head>
 
 <!-- About window -->
-<Win95Window id="home" title={i18n.t('nav.about')} iconKey="about">
+<AppWindow id="home" title={i18n.t('nav.about')} iconKey="about">
 	<div class="home-content">
 		<h2>F12</h2>
 		<p>{i18n.t('about.subtitle')}</p>
@@ -17,10 +17,10 @@
 			{i18n.t('footer.builtWith')}
 		</p>
 	</div>
-</Win95Window>
+</AppWindow>
 
 <!-- Hybrid Diagrams window -->
-<Win95Window id="hybrid-diagrams" title={i18n.t('nav.hybridDiagrams')} iconKey="gears">
+<AppWindow id="hybrid-diagrams" title={i18n.t('nav.hybridDiagrams')} iconKey="gears">
 	{#await import('$lib/components/HybridDiagrams/GearsSvg.svelte') then { default: GearsSvg }}
 		{#await import('$lib/components/HybridDiagrams/GaugeCanvas.svelte') then { default: GaugeCanvas }}
 			<div class="diagrams-content">
@@ -30,10 +30,10 @@
 			</div>
 		{/await}
 	{/await}
-</Win95Window>
+</AppWindow>
 
 <!-- Converters window -->
-<Win95Window id="converters" title={i18n.t('nav.converters')} iconKey="converters">
+<AppWindow id="converters" title={i18n.t('nav.converters')} iconKey="converters">
 	{#await import('$lib/components/Converters/MpgConverter.svelte') then { default: MpgConverter }}
 		{#await import('$lib/components/Converters/FuelPriceConverter.svelte') then { default: FuelPriceConverter }}
 			{#await import('$lib/components/Converters/FuelCostCalculator.svelte') then { default: FuelCostCalculator }}
@@ -46,64 +46,71 @@
 			{/await}
 		{/await}
 	{/await}
-</Win95Window>
+</AppWindow>
 
 <!-- Game of Life window -->
-<Win95Window id="game-of-life" title={i18n.t('nav.gameOfLife')} iconKey="gameOfLife">
+<AppWindow id="game-of-life" title={i18n.t('nav.gameOfLife')} iconKey="gameOfLife">
 	<div class="placeholder-content">TODO</div>
-</Win95Window>
+</AppWindow>
 
 <!-- Image Convert window -->
-<Win95Window id="image-convert" title={i18n.t('nav.imgConvert')} iconKey="imageConvert">
+<AppWindow id="image-convert" title={i18n.t('nav.imgConvert')} iconKey="imageConvert">
 	{#await import('$lib/components/Converters/PngToIco.svelte') then { default: PngToIco }}
 		<div class="image-convert-content">
 			<PngToIco />
 		</div>
 	{/await}
-</Win95Window>
+</AppWindow>
 
-<!-- Wallpaper window -->
-<Win95Window id="wallpaper" title={i18n.locale === 'fr' ? "Fond d'écran" : 'Wallpaper'} iconKey="wallpaper">
-	{#await import('$lib/components/Wallpaper/WallpaperPicker.svelte') then { default: WallpaperPicker }}
-		<WallpaperPicker />
+<!-- Control Panel window -->
+<AppWindow id="control-panel" title={i18n.t('nav.controlPanel')} iconKey="controlPanel">
+	{#await import('$lib/components/ControlPanel/ControlPanel.svelte') then { default: ControlPanel }}
+		<ControlPanel />
 	{/await}
-</Win95Window>
+</AppWindow>
+
+<!-- Personalization window -->
+<AppWindow id="personalization" title={i18n.t('nav.personalization')} iconKey="wallpaper">
+	{#await import('$lib/components/Personalization/Personalization.svelte') then { default: Personalization }}
+		<Personalization />
+	{/await}
+</AppWindow>
 
 <!-- Minesweeper window -->
-<Win95Window id="minesweeper" title={i18n.t('startMenu.minesweeper')} iconKey="minesweeper">
+<AppWindow id="minesweeper" title={i18n.t('startMenu.minesweeper')} iconKey="minesweeper">
 	{#await import('$lib/components/Minesweeper/Minesweeper.svelte') then { default: Minesweeper }}
 		<Minesweeper />
 	{/await}
-</Win95Window>
+</AppWindow>
 
 <!-- Tetris window -->
-<Win95Window id="tetris" title={i18n.t('startMenu.tetris')} iconKey="tetris">
+<AppWindow id="tetris" title={i18n.t('startMenu.tetris')} iconKey="tetris">
 	{#await import('$lib/components/Tetris/Tetris.svelte') then { default: Tetris }}
 		<Tetris />
 	{/await}
-</Win95Window>
+</AppWindow>
 
 <!-- Pokémon Quiz window -->
-<Win95Window id="pokemon-quiz" title={i18n.t('startMenu.pokemonQuiz')} iconKey="pokemonQuiz">
+<AppWindow id="pokemon-quiz" title={i18n.t('startMenu.pokemonQuiz')} iconKey="pokemonQuiz">
 	{#await import('$lib/components/PokemonQuiz/PokemonQuiz.svelte') then { default: PokemonQuiz }}
 		<PokemonQuiz />
 	{/await}
-</Win95Window>
+</AppWindow>
 
 <style>
 	.home-content {
 		padding: 12px;
 		text-align: center;
-	}
 
-	.home-content h2 {
-		font-size: 18px;
-		font-weight: bold;
-		margin-bottom: 6px;
-	}
+		h2 {
+			font-size: 18px;
+			font-weight: bold;
+			margin-bottom: 6px;
+		}
 
-	.home-content p {
-		font-size: 12px;
+		p {
+			font-size: 12px;
+		}
 	}
 
 	.diagrams-content {
@@ -112,11 +119,11 @@
 		align-items: center;
 		gap: 12px;
 		padding: 8px;
-	}
 
-	.diagrams-content h3 {
-		font-size: 13px;
-		font-weight: bold;
+		h3 {
+			font-size: 13px;
+			font-weight: bold;
+		}
 	}
 
 	.converters-content {
@@ -125,11 +132,11 @@
 		align-items: center;
 		gap: 12px;
 		padding: 8px;
-	}
 
-	.converters-content h3 {
-		font-size: 13px;
-		font-weight: bold;
+		h3 {
+			font-size: 13px;
+			font-weight: bold;
+		}
 	}
 
 	.image-convert-content {

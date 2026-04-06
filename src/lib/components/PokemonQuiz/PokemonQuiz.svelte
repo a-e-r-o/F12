@@ -281,6 +281,7 @@
 </div>
 
 <style>
+	/* CSS refactorisé : nesting appliqué */
 	.quiz-container {
 		display: flex;
 		flex-direction: column;
@@ -290,174 +291,200 @@
 		min-height: 300px;
 		width: 350px;
 		user-select: none;
-	}
 
-	.intro {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		text-align: center;
-		gap: 8px;
-		padding: 16px 8px;
-	}
+		/* --- Intro phase ----------------------- */
+		.intro {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			text-align: center;
+			gap: 8px;
+			padding: 16px 8px;
 
-	.intro-icon {
-		font-size: 36px;
-	}
+			.intro-icon {
+				font-size: 36px;
+			}
 
-	.intro h3 {
-		font-size: 15px;
-		font-weight: bold;
-		margin: 0;
-	}
+			h3 {
+				font-size: 15px;
+				font-weight: bold;
+				margin: 0;
+			}
 
-	.subtitle {
-		font-size: 10px;
-		color: var(--color-text-secondary, #666);
-		margin: 0;
-		font-style: italic;
-	}
+			.subtitle {
+				font-size: 10px;
+				color: var(--color-text-secondary, #666);
+				margin: 0;
+				font-style: italic;
+			}
 
-	.desc {
-		font-size: 12px;
-		margin: 6px 0;
-	}
+			.desc {
+				font-size: 12px;
+				margin: 6px 0;
+			}
 
-	.btn-start {
-		margin-top: 8px;
-		padding: 6px 20px;
-		font-size: 12px;
-		font-weight: bold;
-		background: var(--win95-surface, #c0c0c0);
-		border: 2px solid;
-		border-color: var(--win95-border-light, #fff) var(--win95-border-darkest, #000) var(--win95-border-darkest, #000) var(--win95-border-light, #fff);
-		cursor: pointer;
-		font-family: inherit;
-	}
+			.btn-start {
+				margin-top: 8px;
+				padding: 6px 20px;
+				font-size: 12px;
+				font-weight: bold;
+				background: var(--win95-surface, #c0c0c0);
+				border: 2px solid;
+				border-color: var(--win95-border-light, #fff) var(--win95-border-darkest, #000) var(--win95-border-darkest, #000) var(--win95-border-light, #fff);
+				cursor: pointer;
+				font-family: inherit;
 
-	.btn-start:active {
-		border-color: var(--win95-border-darkest, #000) var(--win95-border-light, #fff) var(--win95-border-light, #fff) var(--win95-border-darkest, #000);
-	}
+				&:active {
+					border-color: var(--win95-border-darkest, #000) var(--win95-border-light, #fff) var(--win95-border-light, #fff) var(--win95-border-darkest, #000);
+				}
+			}
+		}
 
-	.question-phase, .gender-phase {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		width: 100%;
-		gap: 10px;
-	}
+		/* --- Question / gender phase ----------- */
+		.question-phase,
+		.gender-phase {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			width: 100%;
+			gap: 10px;
 
-	.progress-bar {
-		width: 100%;
-		height: 14px;
-		background: var(--win95-surface, #c0c0c0);
-		border: 1px solid;
-		border-color: var(--win95-border-darkest, #000) var(--win95-border-light, #fff) var(--win95-border-light, #fff) var(--win95-border-darkest, #000);
-	}
+			.progress-bar {
+				width: 100%;
+				height: 14px;
+				background: var(--win95-surface, #c0c0c0);
+				border: 1px solid;
+				border-color: var(--win95-border-darkest, #000) var(--win95-border-light, #fff) var(--win95-border-light, #fff) var(--win95-border-darkest, #000);
 
-	.progress-fill {
-		height: 100%;
-		background: #000080;
-		transition: width 0.3s ease;
-	}
+				.progress-fill {
+					height: 100%;
+					background: #000080;
+					transition: width 0.3s ease;
+				}
+			}
 
-	.question-counter {
-		font-size: 11px;
-		font-weight: bold;
-		color: var(--color-text-secondary, #666);
-	}
+			.question-counter {
+				font-size: 11px;
+				font-weight: bold;
+				color: var(--color-text-secondary, #666);
+			}
 
-	.question-text {
-		font-size: 13px;
-		text-align: center;
-		padding: 4px 8px;
-		line-height: 1.4;
-		margin: 0;
-	}
+			.question-text {
+				font-size: 13px;
+				text-align: center;
+				padding: 4px 8px;
+				line-height: 1.4;
+				margin: 0;
+			}
 
-	.answers {
-		display: flex;
-		flex-direction: column;
-		gap: 6px;
-		width: 100%;
-		max-width: 380px;
-	}
+			.answers {
+				display: flex;
+				flex-direction: column;
+				gap: 6px;
+				width: 100%;
+				max-width: 380px;
 
-	.btn-answer {
-		padding: 7px 12px;
-		font-size: 12px;
-		text-align: left;
-		background: var(--win95-surface, #c0c0c0);
-		border: 2px solid;
-		border-color: var(--win95-border-light, #fff) var(--win95-border-darkest, #000) var(--win95-border-darkest, #000) var(--win95-border-light, #fff);
-		cursor: pointer;
-		font-family: inherit;
-		line-height: 1.3;
-	}
+				.btn-answer {
+					padding: 7px 12px;
+					font-size: 12px;
+					text-align: left;
+					background: var(--win95-surface, #c0c0c0);
+					border: 2px solid;
+					border-color: var(--win95-border-light, #fff) var(--win95-border-darkest, #000) var(--win95-border-darkest, #000) var(--win95-border-light, #fff);
+					cursor: pointer;
+					font-family: inherit;
+					line-height: 1.3;
 
-	.btn-answer:hover {
-		background: #000080;
-		color: #fff;
-	}
+					&:hover {
+						background: #000080;
+						color: #fff;
+					}
 
-	.btn-answer:active {
-		border-color: var(--win95-border-darkest, #000) var(--win95-border-light, #fff) var(--win95-border-light, #fff) var(--win95-border-darkest, #000);
-	}
+					&:active {
+						border-color: var(--win95-border-darkest, #000) var(--win95-border-light, #fff) var(--win95-border-light, #fff) var(--win95-border-darkest, #000);
+					}
+				}
+			}
+		}
 
-	.result-phase {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		text-align: center;
-		gap: 10px;
-		padding: 8px;
-	}
+		/* --- Result phase ---------------------- */
+		.result-phase {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			text-align: center;
+			gap: 10px;
+			padding: 8px;
 
-	.result-nature {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 4px;
-	}
+			.result-nature {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 4px;
 
-	.result-label {
-		font-size: 12px;
-		color: var(--color-text-secondary, #666);
-		margin: 0;
-	}
+				.result-label {
+					font-size: 12px;
+					color: var(--color-text-secondary, #666);
+					margin: 0;
+				}
 
-	.nature-name {
-		font-size: 16px;
-		font-weight: bold;
-		color: #000080;
-		margin: 0;
-	}
+				.nature-name {
+					font-size: 16px;
+					font-weight: bold;
+					color: #000080;
+					margin: 0;
+				}
 
-	.nature-desc {
-		font-size: 11px;
-		font-style: italic;
-		margin: 0;
-		max-width: 320px;
-		line-height: 1.4;
-	}
+				.nature-desc {
+					font-size: 11px;
+					font-style: italic;
+					margin: 0;
+					max-width: 320px;
+					line-height: 1.4;
+				}
+			}
 
-	.result-pokemon {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 4px;
-		margin-top: 4px;
-	}
+			.result-pokemon {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 4px;
+				margin-top: 4px;
 
-	.pokemon-sprite {
-		width: 96px;
-		height: 96px;
-		image-rendering: pixelated;
-	}
+				.result-label {
+					font-size: 12px;
+					color: var(--color-text-secondary, #666);
+					margin: 0;
+				}
 
-	.pokemon-name {
-		font-size: 18px;
-		font-weight: bold;
-		margin: 0;
+				.pokemon-sprite {
+					width: 96px;
+					height: 96px;
+					image-rendering: pixelated;
+				}
+
+				.pokemon-name {
+					font-size: 18px;
+					font-weight: bold;
+					margin: 0;
+				}
+			}
+
+			.btn-start {
+				margin-top: 8px;
+				padding: 6px 20px;
+				font-size: 12px;
+				font-weight: bold;
+				background: var(--win95-surface, #c0c0c0);
+				border: 2px solid;
+				border-color: var(--win95-border-light, #fff) var(--win95-border-darkest, #000) var(--win95-border-darkest, #000) var(--win95-border-light, #fff);
+				cursor: pointer;
+				font-family: inherit;
+
+				&:active {
+					border-color: var(--win95-border-darkest, #000) var(--win95-border-light, #fff) var(--win95-border-light, #fff) var(--win95-border-darkest, #000);
+				}
+			}
+		}
 	}
 </style>

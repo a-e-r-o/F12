@@ -53,80 +53,82 @@
 </div>
 
 <style>
+	/* CSS refactorisé : nesting appliqué */
 	.lang-switcher {
 		position: relative;
 		display: inline-block;
-        width: 20px;
+		width: 20px;
 		height: 20px;
+
+		.lang-toggle {
+			background: var(--win95-btn-face);
+			border: 1px solid var(--win95-border-dark);
+			border-radius: 0;
+			height: 100%;
+			width: 100%;
+			padding: 0;
+			overflow: hidden;
+			cursor: pointer;
+
+			&:hover {
+				border-color: var(--win95-border-darkest);
+			}
+
+			.flag-img {
+				display: block;
+				width: 100%;
+				height: 100%;
+				padding: 1px;
+				box-sizing: border-box;
+				object-fit: cover;
+			}
+		}
+
+		.dropdown {
+			position: absolute;
+			bottom: calc(100% + 4px);
+			left: 50%;
+			transform: translateX(-50%);
+			list-style: none;
+			margin: 0;
+			padding: 2px 0;
+			background: var(--win95-surface);
+			border: 2px solid;
+			border-color: var(--win95-border-light) var(--win95-border-darkest) var(--win95-border-darkest) var(--win95-border-light);
+			box-shadow: inset 1px 1px 0 var(--win95-border-mid), inset -1px -1px 0 var(--win95-border-dark);
+			min-width: 120px;
+			z-index: 10001;
+
+			li button {
+				display: flex;
+				align-items: center;
+				gap: 6px;
+				width: 100%;
+				padding: 3px 8px;
+				border: none;
+				background: none;
+				color: var(--color-text);
+				font-size: 11px;
+				cursor: pointer;
+				font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+				&:hover {
+					background: var(--color-primary);
+					color: #ffffff;
+				}
+
+				&.active {
+					font-weight: bold;
+				}
+
+				.flag-img-sm {
+					width: 18px;
+					height: 12px;
+					object-fit: cover;
+					flex-shrink: 0;
+				}
+			}
+		}
 	}
 
-	.lang-toggle {
-		background: var(--win95-btn-face);
-		border: 1px solid var(--win95-border-dark);
-		border-radius: 0;
-		height: 100%;
-        width: 100%;
-		padding: 0;
-		overflow: hidden;
-		cursor: pointer;
-	}
-
-	.lang-toggle:hover {
-		border-color: var(--win95-border-darkest);
-	}
-
-    .flag-img {
-        display: block;
-        width: 100%;
-        height: 100%;
-        padding: 1px;
-        box-sizing: border-box;
-        object-fit: cover;            
-    }
-
-	.flag-img-sm {
-		width: 18px;
-		height: 12px;
-		object-fit: cover;
-		flex-shrink: 0;
-	}
-
-	.dropdown {
-		position: absolute;
-		bottom: calc(100% + 4px);
-		left: 50%;
-		transform: translateX(-50%);
-		list-style: none;
-		margin: 0;
-		padding: 2px 0;
-		background: var(--win95-surface);
-		border: 2px solid;
-		border-color: var(--win95-border-light) var(--win95-border-darkest) var(--win95-border-darkest) var(--win95-border-light);
-		box-shadow: inset 1px 1px 0 var(--win95-border-mid), inset -1px -1px 0 var(--win95-border-dark);
-		min-width: 120px;
-		z-index: 10001;
-
-        li button {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            width: 100%;
-            padding: 3px 8px;
-            border: none;
-            background: none;
-            color: var(--color-text);
-            font-size: 11px;
-            cursor: pointer;
-			font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-		li button:hover {
-			background: var(--color-primary);
-			color: #ffffff;
-        }
-
-        li button.active {
-            font-weight: bold;
-        }
-    }
 </style>

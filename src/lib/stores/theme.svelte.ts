@@ -19,12 +19,11 @@ const iconKeyToFile: Record<ThemeId, Record<string, string>> = {
 		gameOfLife:   'video',
 		imageConvert: 'img_converter',
 		wallpaper:    'wallpaper',
+		controlPanel: 'wallpaper',
 		minesweeper:  'minesweeper',
 		tetris:       'tetris',
 		pokemonQuiz:  'quizz',
 		start:        'win',
-		crtOn:        'crt_on',
-		crtOff:       'crt_off',
 		shutdown:     'shutdown',
 	},
 	win7aero: {

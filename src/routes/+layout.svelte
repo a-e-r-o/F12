@@ -3,21 +3,20 @@
 	import '$lib/assets/theme.css';
 	import { i18n, windowsState, themeState } from '$lib/stores';
 	import { wallpaperState } from '$lib/stores/wallpaper.svelte';
-	import { crt } from '$lib/stores/crt.svelte';
-	import { Win95Taskbar } from '$lib/components';
+	import { AppTaskbar } from '$lib/components';
+	import StartMenu from '$lib/components/Shared/StartMenu.svelte';
 	import { onMount } from 'svelte';
 
 	let { children } = $props();
 
 	let bgStyle = $derived(wallpaperState.backgroundStyle);
-	let taskbarHeight = $derived(themeState.isWin7 ? 44 : 32);
+	let startMenuOpen = $state(false);
 
 	onMount(() => {
 		themeState.init();
 		i18n.init();
 		windowsState.init();
 		wallpaperState.init();
-		crt.init();
 	});
 
 	// Sync wallpaper collection when theme changes
@@ -37,34 +36,27 @@
 
 <div
 	class="desktop"
-	class:pixelated={themeState.isWin95}
-	style="{bgStyle} height: calc(100vh - {taskbarHeight}px);"
+	style="{bgStyle}"
+	role="presentation"
+	onmousedown={() => windowsState.unfocusAll()}
 >
 	{@render children()}
 </div>
 
-<Win95Taskbar />
-
-<!-- SVG filter for CRT horizontal color bleed (hidden, referenced by CSS) -->
-<svg class="crt-filter-svg" xmlns="http://www.w3.org/2000/svg">
-	<defs>
-		<filter id="crt-color-bleed" color-interpolation-filters="sRGB">
-			<!-- Horizontal blur: blends adjacent pixel colors along scanline -->
-			<feGaussianBlur in="SourceGraphic" stdDeviation="0.6 0" />
-		</filter>
-	</defs>
-</svg>
+<StartMenu open={startMenuOpen} onclose={() => startMenuOpen = false} />
+<AppTaskbar bind:startMenuOpen />
 
 <style>
 	.desktop {
 		position: relative;
 		width: 100vw;
+		height: calc(100vh - var(--taskbar-height, 32px));
 		overflow: hidden;
 		background-size: cover;
 		background-position: center;
-	}
 
-	.desktop.pixelated {
-		image-rendering: pixelated;
+		:global([data-theme="win95"]) & {
+			image-rendering: pixelated;
+		}
 	}
 </style>

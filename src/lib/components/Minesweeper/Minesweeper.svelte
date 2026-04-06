@@ -18,21 +18,21 @@
 		gap: 8px;
 		min-width: 280px;
 		min-height: 200px;
-	}
 
-	.icon {
-		font-size: 48px;
-	}
+		.icon {
+			font-size: 48px;
+		}
 
-	h3 {
-		font-size: 14px;
-		font-weight: bold;
-		margin: 0;
-	}
+		h3 {
+			font-size: 14px;
+			font-weight: bold;
+			margin: 0;
+		}
 
-	p {
-		font-size: 11px;
-		color: #808080;
-		margin: 0;
+		p {
+			font-size: 11px;
+			color: #808080;
+			margin: 0;
+		}
 	}
 </style>

@@ -17,6 +17,7 @@
 </button>
 
 <style>
+	/* CSS refactorisé : nesting appliqué */
 	.theme-toggle {
 		background: var(--glass-surface-strong);
 		border: 1px solid var(--ui-border);
@@ -40,9 +41,9 @@
 			transform: scale(1.1);
 			border-color: var(--color-primary);
 		}
-	}
 
-	.icon {
-		line-height: 0.5;
+		.icon {
+			line-height: 0.5;
+		}
 	}
 </style>

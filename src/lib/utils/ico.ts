@@ -84,3 +84,110 @@ export async function buildIco(pngBlobs: Blob[], sizes: number[]): Promise<Blob>
 
 /** All standard sizes available for an ICO file. */
 export const ICO_SIZES = [16, 24, 32, 48, 64, 128, 256] as const;
+
+/** A single image entry extracted from an ICO file. */
+export interface IcoEntry {
+	width: number;
+	height: number;
+	blob: Blob;
+}
+
+const PNG_SIGNATURE = [0x89, 0x50, 0x4e, 0x47];
+
+/**
+ * Parse an ICO file and extract each embedded image as a PNG Blob.
+ * BMP entries are rendered to a canvas and re-exported as PNG.
+ */
+export async function parseIco(file: Blob): Promise<IcoEntry[]> {
+	const buf = await file.arrayBuffer();
+	const view = new DataView(buf);
+
+	const reserved = view.getUint16(0, true);
+	const type = view.getUint16(2, true);
+	const count = view.getUint16(4, true);
+
+	if (reserved !== 0 || type !== 1 || count === 0) {
+		throw new Error('Not a valid ICO file');
+	}
+
+	const entries: IcoEntry[] = [];
+
+	for (let i = 0; i < count; i++) {
+		const offset = 6 + i * 16;
+		const w = view.getUint8(offset) || 256;
+		const h = view.getUint8(offset + 1) || 256;
+		const bytesInRes = view.getUint32(offset + 8, true);
+		const imageOffset = view.getUint32(offset + 12, true);
+
+		const imageData = new Uint8Array(buf, imageOffset, bytesInRes);
+
+		const isPng = imageData.length >= 4 &&
+			imageData[0] === PNG_SIGNATURE[0] &&
+			imageData[1] === PNG_SIGNATURE[1] &&
+			imageData[2] === PNG_SIGNATURE[2] &&
+			imageData[3] === PNG_SIGNATURE[3];
+
+		if (isPng) {
+			entries.push({ width: w, height: h, blob: new Blob([imageData], { type: 'image/png' }) });
+		} else {
+			// DIB data inside ICO (no BITMAPFILEHEADER) — decode manually
+			const dibView = new DataView(imageData.buffer, imageData.byteOffset, imageData.byteLength);
+			const bpp = dibView.getUint16(14, true); // biBitCount
+			// biHeight in ICO DIBs is doubled (XOR + AND mask), real height is h from directory
+			const realW = w;
+			const realH = h;
+
+			const canvas = document.createElement('canvas');
+			canvas.width = realW;
+			canvas.height = realH;
+			const ctx = canvas.getContext('2d')!;
+			const imgData = ctx.createImageData(realW, realH);
+
+			if (bpp === 32) {
+				// 32-bit BGRA — pixel data starts after 40-byte BITMAPINFOHEADER
+				const pixelOffset = 40;
+				const stride = realW * 4;
+				for (let y = 0; y < realH; y++) {
+					// DIB rows are bottom-up
+					const srcRow = (realH - 1 - y) * stride + pixelOffset;
+					const dstRow = y * realW * 4;
+					for (let x = 0; x < realW; x++) {
+						const si = srcRow + x * 4;
+						const di = dstRow + x * 4;
+						imgData.data[di] = imageData[si + 2];     // R ← B
+						imgData.data[di + 1] = imageData[si + 1]; // G
+						imgData.data[di + 2] = imageData[si];     // B ← R
+						imgData.data[di + 3] = imageData[si + 3]; // A
+					}
+				}
+			} else if (bpp === 24) {
+				const headerSize = dibView.getUint32(0, true);
+				const pixelOffset = headerSize;
+				const rowBytes = Math.ceil((realW * 3) / 4) * 4; // rows padded to 4 bytes
+				for (let y = 0; y < realH; y++) {
+					const srcRow = (realH - 1 - y) * rowBytes + pixelOffset;
+					const dstRow = y * realW * 4;
+					for (let x = 0; x < realW; x++) {
+						const si = srcRow + x * 3;
+						const di = dstRow + x * 4;
+						imgData.data[di] = imageData[si + 2];
+						imgData.data[di + 1] = imageData[si + 1];
+						imgData.data[di + 2] = imageData[si];
+						imgData.data[di + 3] = 255;
+					}
+				}
+			} else {
+				// Unsupported bpp — skip this entry
+				continue;
+			}
+
+			ctx.putImageData(imgData, 0, 0);
+			const pngBlob = await new Promise<Blob>((resolve, reject) => {
+				canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('DIB to PNG failed'))), 'image/png');
+			});
+			entries.push({ width: realW, height: realH, blob: pngBlob });
+		}
+	}
+
+	return entries.sort((a, b) => a.width - b.width);
+}

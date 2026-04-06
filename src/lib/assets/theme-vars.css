@@ -1,0 +1,166 @@
+/* === THEME VARIABLES =================================== */
+
+/* --- Win95 theme (default) ----------------------------- */
+:root,
+[data-theme="win95"] {
+	--color-bg: #008080;
+	--color-bg-secondary: #c0c0c0;
+	--color-surface: #c0c0c0;
+	--color-surface-rgb: 192 192 192;
+	--color-text: #000000;
+	--color-text-secondary: #444444;
+	--color-primary: #000080;
+	--color-primary-hover: #0000a0;
+	--color-border: #808080;
+	--color-shadow: rgba(0, 0, 0, 0.3);
+
+	/* Win95 3D border colors */
+	--win-border-light: #ffffff;
+	--win-border-mid: #dfdfdf;
+	--win-border-dark: #808080;
+	--win-border-darkest: #000000;
+	--win-surface: #c0c0c0;
+	--win-titlebar-active: linear-gradient(90deg, #000080, #1084d0);
+	--win-titlebar-inactive: linear-gradient(90deg, #808080, #b0b0b0);
+	--win-titlebar-text-active: #ffffff;
+	--win-titlebar-text-inactive: #c0c0c0;
+	--win-taskbar-bg: #c0c0c0;
+	--win-desktop-bg: #008080;
+	--win-btn-face: #c0c0c0;
+	--win-btn-highlight: #ffffff;
+	--win-btn-shadow: #808080;
+	--win-btn-dark-shadow: #000000;
+
+	/* Window chrome */
+	--win-window-radius: 0px;
+	--win-window-border: 2px solid;
+	--win-window-border-color: var(--win-border-light) var(--win-border-darkest) var(--win-border-darkest) var(--win-border-light);
+	--win-window-shadow: inset 1px 1px 0 var(--win-border-mid), inset -1px -1px 0 var(--win-border-dark);
+	--win-titlebar-height: 22px;
+	--win-body-bg: var(--win-surface);
+
+	/* Legacy aliases (for components still using old names) */
+	--win95-border-light: var(--win-border-light);
+	--win95-border-mid: var(--win-border-mid);
+	--win95-border-dark: var(--win-border-dark);
+	--win95-border-darkest: var(--win-border-darkest);
+	--win95-surface: var(--win-surface);
+	--win95-titlebar-active: var(--win-titlebar-active);
+	--win95-titlebar-inactive: var(--win-titlebar-inactive);
+	--win95-titlebar-text-active: var(--win-titlebar-text-active);
+	--win95-titlebar-text-inactive: var(--win-titlebar-text-inactive);
+	--win95-taskbar-bg: var(--win-taskbar-bg);
+	--win95-desktop-bg: var(--win-desktop-bg);
+	--win95-btn-face: var(--win-btn-face);
+	--win95-btn-highlight: var(--win-btn-highlight);
+	--win95-btn-shadow: var(--win-btn-shadow);
+	--win95-btn-dark-shadow: var(--win-btn-dark-shadow);
+
+	/* Taskbar */
+	--taskbar-height: 32px;
+
+	/* Gear visualization */
+	--indicator-fill: #1a1a2e;
+	--gear-sun: #2dd36f;
+	--gear-planet: #05a6b8;
+	--gear-ring: #f7b500;
+	--gear-carrier: #05a6b8;
+	--indicator-carrier: #1a1a2e;
+	--ui-border: var(--color-border);
+}
+
+/* --- Win7 Aero theme ----------------------------------- */
+[data-theme="win7aero"] {
+	--color-bg: #4a90d9;
+	--color-bg-secondary: #f0f0f0;
+	--color-surface: #f0f0f0;
+	--color-surface-rgb: 240 240 240;
+	--color-text: #000000;
+	--color-text-secondary: #444444;
+	--color-primary: #4580c4;
+	--color-primary-hover: #3570b0;
+	--color-border: #b0b0b0;
+	--color-shadow: rgba(0, 0, 0, 0.35);
+
+	--theme-color: rgba(170,209,251,0.65);
+	--theme-color--inactive: rgba(170,209,251,0.3);
+	--theme-color--light: #fff;
+	--theme-color--dark: #499cf6;
+	--window-title-color: #000;
+
+	/* Window border — the colored glass frame */
+	--win-border-light: rgba(255, 255, 255, 0.5);
+	--win-border-mid: rgba(255, 255, 255, 0.25);
+	--win-border-dark: rgba(0, 0, 0, 0.15);
+	--win-border-darkest: rgba(0, 0, 0, 0.25);
+	--win-surface: #f0f0f0;
+	--win-titlebar-active: linear-gradient(180deg,
+		rgba(150, 195, 240, 0.70) 0%,
+		rgba(120, 175, 230, 0.55) 50%,
+		rgba(100, 160, 220, 0.50) 100%
+	);
+	--win-titlebar-inactive: linear-gradient(180deg,
+		rgba(210, 220, 235, 0.65) 0%,
+		rgba(195, 210, 228, 0.50) 100%
+	);
+	--win-titlebar-text-active: #1a1a1a;
+	--win-titlebar-text-inactive: #6e6e6e;
+	--win-taskbar-bg: rgba(16, 36, 76, 0.72);
+	--win-desktop-bg: #4a90d9;
+	--win-btn-face: #e5e5e5;
+	--win-btn-highlight: #ffffff;
+	--win-btn-shadow: #adadad;
+	--win-btn-dark-shadow: #696969;
+
+	/* Window chrome */
+	--win-window-radius: 6px;
+	--win-window-border: 1px solid;
+	--win-window-border-color: rgba(100, 160, 230, 0.50);
+	--win-window-shadow: 0 4px 24px rgba(0, 0, 0, 0.28),
+		0 0 0 1px rgba(60, 130, 210, 0.35),
+		inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+	--win-titlebar-height: 30px;
+	--win-body-bg: #ffffff;
+
+	/* Legacy aliases */
+	--win95-border-light: var(--win-border-light);
+	--win95-border-mid: var(--win-border-mid);
+	--win95-border-dark: var(--win-border-dark);
+	--win95-border-darkest: var(--win-border-darkest);
+	--win95-surface: var(--win-surface);
+	--win95-titlebar-active: var(--win-titlebar-active);
+	--win95-titlebar-inactive: var(--win-titlebar-inactive);
+	--win95-titlebar-text-active: var(--win-titlebar-text-active);
+	--win95-titlebar-text-inactive: var(--win-titlebar-text-inactive);
+	--win95-taskbar-bg: var(--win-taskbar-bg);
+	--win95-desktop-bg: var(--win-desktop-bg);
+	--win95-btn-face: var(--win-btn-face);
+	--win95-btn-highlight: var(--win-btn-highlight);
+	--win95-btn-shadow: var(--win-btn-shadow);
+	--win95-btn-dark-shadow: var(--win-btn-dark-shadow);
+
+	/* Gear visualization */
+	--indicator-fill: #1a1a2e;
+	--gear-sun: #2dd36f;
+	--gear-planet: #05a6b8;
+	--gear-ring: #f7b500;
+	--gear-carrier: #05a6b8;
+	--indicator-carrier: #1a1a2e;
+	--ui-border: var(--color-border);
+
+	/* Taskbar */
+	--taskbar-height: 45px;
+
+	--window-spacing: 6px;
+	--window-border: 1px solid;
+	--window-border-radius: 6px;
+	--window-border-color: #000000b3;
+	--window-background-color: #4580c4;
+	--window-background-color-inactive: #d6dde6;
+	--window-background: linear-gradient(to right,#ffffff66,#0000001a,#ffffff33),var(--window-background-color);
+	--control-border-color: #0000004d;
+	--control-border-radius: 5px;
+	--control-inset-shadow: inset 0 0 0 1px #fffa;
+	--control-background: linear-gradient(#ffffff80,#ffffff4d 45%,#0000001a 50%,#0000001a 75%,#ffffff80);
+	--control-background-close: radial-gradient(circle at -60% 50%,#0007 5% 10%,#0000 50%),radial-gradient(circle at 160% 50%,#0007 5% 10%,#0000 50%),linear-gradient(#e0a197e5,#cf796a 25% 50%,#d54f36 50%);
+}

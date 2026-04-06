@@ -1,6 +1,6 @@
 import { buildWindows } from './programs.svelte';
 
-export interface Win95Window {
+export interface AppWindow {
 	id: string;
 	title: string;
 	iconKey: string;
@@ -21,11 +21,11 @@ export interface Win95Window {
 }
 
 const MOBILE_BREAKPOINT = 768;
-const STORAGE_KEY = 'win95-windows';
+const STORAGE_KEY = 'app-windows';
 let nextZ = 10;
 let saveTimer: ReturnType<typeof setTimeout> | null = null;
 
-function scheduleSave(windows: Win95Window[]) {
+function scheduleSave(windows: AppWindow[]) {
 	if (saveTimer !== null) clearTimeout(saveTimer);
 	saveTimer = setTimeout(() => {
 		const data = windows.map(({ id, visible, maximized, x, y, prevX, prevY, closable }) => ({
@@ -42,7 +42,8 @@ function randomPos(maxW: number, maxH: number, winW = 520, winH = 380) {
 }
 
 function createWindowsState() {
-	let windows = $state<Win95Window[]>(buildWindows());
+	let windows = $state<AppWindow[]>(buildWindows());
+	let focusedId = $state<string | null>(null);
 
 	let mobile = $state(false);
 
@@ -53,6 +54,10 @@ function createWindowsState() {
 
 		get isMobile() {
 			return mobile;
+		},
+
+		get focusedId() {
+			return focusedId;
 		},
 
 		/** Call once on mount — sets up mobile detection, randomizes positions, and installs resize clamping */
@@ -76,7 +81,7 @@ function createWindowsState() {
 				const saved = localStorage.getItem(STORAGE_KEY);
 				if (saved) {
 					try {
-						const data: Pick<Win95Window, 'id' | 'visible' | 'maximized' | 'x' | 'y' | 'prevX' | 'prevY'>[] = JSON.parse(saved);
+						const data: Pick<AppWindow, 'id' | 'visible' | 'maximized' | 'x' | 'y' | 'prevX' | 'prevY'>[] = JSON.parse(saved);
 						for (const w of windows) {
 							const s = data.find((d) => d.id === w.id);
 							if (s) {
@@ -125,7 +130,14 @@ function createWindowsState() {
 
 		bringToFront(id: string) {
 			const w = windows.find((w) => w.id === id);
-			if (w) w.zIndex = nextZ++;
+			if (w) {
+				w.zIndex = nextZ++;
+				focusedId = id;
+			}
+		},
+
+		unfocusAll() {
+			focusedId = null;
 		},
 
 		move(id: string, x: number, y: number) {
@@ -166,6 +178,7 @@ function createWindowsState() {
 					w.x = 0;
 					w.y = 0;
 					w.zIndex = nextZ++;
+					focusedId = id;
 				}
 			}
 		},
@@ -178,7 +191,10 @@ function createWindowsState() {
 			const w = windows.find((w) => w.id === id);
 			if (w) {
 				w.visible = !w.visible;
-				if (w.visible) w.zIndex = nextZ++;
+				if (w.visible) {
+					w.zIndex = nextZ++;
+					focusedId = id;
+				}
 				scheduleSave(windows);
 			}
 		},
@@ -192,6 +208,7 @@ function createWindowsState() {
 			if (w) {
 				w.visible = true;
 				w.zIndex = nextZ++;
+				focusedId = id;
 				scheduleSave(windows);
 			}
 		},
@@ -259,6 +276,7 @@ function createWindowsState() {
 			w.visible = true;
 			w.running = true;
 			w.zIndex = nextZ++;
+			focusedId = id;
 			scheduleSave(windows);
 		},
 
