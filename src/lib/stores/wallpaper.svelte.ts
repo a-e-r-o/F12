@@ -3,7 +3,8 @@ import peakpx from '$lib/assets/Backgrounds/win95/peakpx.jpg';
 import peakpxLava from '$lib/assets/Backgrounds/win95/peakpx_lava.jpg';
 import spaceNebula from '$lib/assets/Backgrounds/win95/space_nebula.jpg';
 import frutigerAero from '$lib/assets/Backgrounds/win7/Frutiger_Aero.jpg';
-import frutigeraero from '$lib/assets/Backgrounds/win7/frutigeraero.jpg';
+import frutigerAero1 from '$lib/assets/Backgrounds/win7/frutigeraero.jpg';
+import defaultWin7 from '$lib/assets/Backgrounds/win7/defaultwin7.jpg';
 import type { ThemeId } from './theme.svelte';
 
 export interface Wallpaper {
@@ -25,8 +26,9 @@ const wallpapersByTheme: Record<ThemeId, Wallpaper[]> = {
 	],
 	win7aero: [
 		{ id: 'none', name: 'None', url: '' },
-		{ id: 'frutiger-aero', name: 'Frutiger Aero', url: frutigerAero },
-		{ id: 'frutigeraero', name: 'Frutiger Aero 2', url: frutigeraero }
+		{ id: 'aero-default', name: 'Aero', url: defaultWin7 },
+		{ id: 'frutiger-aero', name: 'Frutiger Aero 1', url: frutigerAero },
+		{ id: 'frutiger-aero-2', name: 'Frutiger Aero 2', url: frutigerAero1 },
 	]
 };
 
@@ -72,7 +74,7 @@ function createWallpaperState() {
 			const all = wallpapersByTheme[theme];
 			// If current wallpaper isn't in the new theme, pick the default
 			if (!all.some((w) => w.id === current)) {
-				const defaultId = theme === 'win7aero' ? 'frutiger-aero' : 'bliss';
+				const defaultId = theme === 'win7aero' ? 'aero-default' : 'bliss';
 				current = defaultId;
 				localStorage.setItem(STORAGE_KEY, current);
 			}
