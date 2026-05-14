@@ -220,8 +220,6 @@
 		box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.333);
 		background: linear-gradient(rgba(0, 0, 0, 0.333), rgba(0, 0, 0, 0.533) 15% 60%, rgba(0, 0, 0, 0.133));
 		background-color: var(--theme-color);
-
-		display: flex;
 		flex: 1;
 		min-height: 280px;
 
