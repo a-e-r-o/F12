@@ -1,116 +1,62 @@
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.svg';
 	import '$lib/assets/theme.css';
-	import { theme, navbar, i18n, crt } from '$lib/stores';
-	import { FpsCounter, Navbar } from '$lib/components';
+	import { i18n, windowsState, themeState } from '$lib/stores';
+	import { wallpaperState } from '$lib/stores/wallpaper.svelte';
+	import { AppTaskbar } from '$lib/components';
+	import StartMenu from '$lib/components/Shared/StartMenu.svelte';
 	import { onMount } from 'svelte';
-	import { onNavigate } from '$app/navigation';
 
 	let { children } = $props();
 
+	let bgStyle = $derived(wallpaperState.backgroundStyle);
+	let startMenuOpen = $state(false);
+
 	onMount(() => {
-		theme.init();
+		themeState.init();
 		i18n.init();
-		crt.init();
+		windowsState.init();
+		wallpaperState.init();
 	});
 
-	onNavigate((navigation) => {
-		if (!document.startViewTransition) return;
-		return new Promise((resolve) => {
-			document.startViewTransition(async () => {
-				resolve();
-				await navigation.complete;
-			});
-		});
+	// Sync wallpaper collection when theme changes
+	$effect(() => {
+		const theme = themeState.current;
+		if (theme) {
+			wallpaperState.setTheme(theme);
+		}
 	});
 </script>
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 	<meta name="description" content="F12 — Interactive toolbox built with SvelteKit & Svelte 5" />
 </svelte:head>
 
-<Navbar />
-
-<!-- Main content -->
-<main class="content" class:sidebar-open={navbar.isOpen}>
+<div
+	class="desktop"
+	style="{bgStyle}"
+	role="presentation"
+	onmousedown={() => windowsState.unfocusAll()}
+>
 	{@render children()}
-</main>
+</div>
 
-<footer class="site-footer" class:sidebar-open={navbar.isOpen}>
-	<span>F12</span>
-	<span class="sep">·</span>
-	<span>{i18n.t('footer.builtWith')}</span>
-</footer>
-
-<FpsCounter />
+<StartMenu open={startMenuOpen} onclose={() => startMenuOpen = false} />
+<AppTaskbar bind:startMenuOpen />
 
 <style>
-	@keyframes fade-in {
-		from { opacity: 0; }
-	}
-	@keyframes fade-out {
-		to { opacity: 0; }
-	}
-
-	:root {
-		&::view-transition-old(root) {
-			animation: 120ms ease fade-out;
-		}
-		&::view-transition-new(root) {
-			animation: 120ms ease fade-in;
-		}
-	}
-
-	.content {
-		margin-left: 0;
-		min-height: 100vh;
+	.desktop {
 		position: relative;
-		background:
-			radial-gradient(
-				ellipse 55% 60% at 0% 0%,
-				color-mix(in srgb, var(--header-gradient-from) 50%, transparent),
-				transparent
-			),
-			radial-gradient(
-				ellipse 55% 60% at 100% 100%,
-				color-mix(in srgb, var(--header-gradient-to) 50%, transparent),
-				transparent
-			);
-		transition: margin-left 0.3s ease;
-		padding-bottom: 1.5rem;
-	}
+		width: 100vw;
+		height: calc(100vh - var(--taskbar-height, 32px));
+		overflow: hidden;
+		background-size: cover;
+		background-position: center;
 
-	.site-footer {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		gap: 0.5rem;
-		padding: 1.25rem 1rem;
-		font-size: 0.78rem;
-		color: var(--color-text-secondary);
-		margin: 0 auto 1rem;
-		width: min(calc(100% - 2rem), 960px);
-		border: 1px solid var(--glass-border);
-		border-radius: 999px;
-		background: var(--glass-surface);
-		box-shadow: var(--glass-shadow);
-		backdrop-filter: blur(calc(var(--glass-blur) * 0.75)) saturate(var(--glass-saturate));
-		-webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.75)) saturate(var(--glass-saturate));
-		opacity: 0.9;
-		transition: margin-left 0.3s ease;
-	}
-
-	.site-footer .sep {
-		opacity: 0.4;
-	}
-
-	@media (min-width: 769px) {
-		.content.sidebar-open {
-			margin-left: 320px;
-		}
-		.site-footer.sidebar-open {
-			margin-left: 320px;
+		:global([data-theme="win95"]) & {
+			image-rendering: pixelated;
 		}
 	}
 </style>

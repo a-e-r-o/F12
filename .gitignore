@@ -21,3 +21,9 @@ Thumbs.db
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Deploy — seul deploy.example.ps1 est versionné
+deploy.ps1
+
+# CI
+.github/
