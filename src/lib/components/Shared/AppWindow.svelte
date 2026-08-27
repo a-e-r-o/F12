@@ -1,33 +1,34 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { setContext } from 'svelte';
-	import { windowsState } from '$lib/stores/windows.svelte';
+	import { windowsState, taskbarHeight, isShown, isRunning } from '$lib/stores/windows.svelte';
 	import { themeState } from '$lib/stores/theme.svelte';
+	import { programById } from '$lib/stores/programs';
+	import { i18n } from '$lib/stores/i18n.svelte';
 
-	let {
-		id,
-		title,
-		iconKey = '',
-		children
-	}: {
-		id: string;
-		title: string;
-		iconKey?: string;
-		children: Snippet;
-	} = $props();
+	let { id, children }: { id: string; children: Snippet } = $props();
+
+	// Title and icon come from the program registry, resolved at render time so they follow
+	// both the active locale and the active theme with no syncing code.
+	let prog = $derived(programById(id));
+	let title = $derived(prog ? i18n.t(prog.titleKey) : id);
+	let iconKey = $derived(prog?.iconKey ?? '');
 
 	let win = $derived(windowsState.windows.find((w) => w.id === id));
-	let visible = $derived(win?.visible ?? false);
-	let maximized = $derived(win?.maximized ?? false);
+	let visible = $derived(win ? isShown(win) : false);
+	let maximized = $derived(win?.status === 'maximized');
 	let maximizable = $derived(win?.maximizable ?? true);
 	let closable = $derived(win?.closable ?? false);
 	let isMobile = $derived(windowsState.isMobile);
 	let icon = $derived(iconKey ? themeState.icon(iconKey) : '');
 	let isFocused = $derived(windowsState.focusedId === id);
 
-	let mounted = $derived(!win?.closable || (win?.running ?? false));
+	// A closed program isn't mounted at all: its chunk stays unloaded and its state resets.
+	let mounted = $derived(win ? isRunning(win) : false);
 
-	setContext('window:active', { get value() { return visible; } });
+	// NB: this used to publish a 'window:active' context for animating children to read.
+	// Nothing ever consumed it, and when wired up it did not survive the children-snippet +
+	// dynamic-import boundary. Components that need to know now measure the DOM themselves —
+	// see utils/windowActive.svelte.ts.
 
 	let dragging = $state(false);
 	let dragOffsetX = 0;
@@ -49,33 +50,56 @@
 		windowsState.bringToFront(id);
 	}
 
-	function onTitlebarDown(e: MouseEvent) {
+	/**
+	 * Pointer Events rather than mouse events: this gets touch dragging on tablets for free,
+	 * and `setPointerCapture` keeps the drag alive when the cursor leaves the browser window
+	 * or crosses an iframe — both of which used to drop it mid-move.
+	 */
+	function onTitlebarDown(e: PointerEvent) {
 		if ((e.target as HTMLElement).closest('.titlebar-buttons')) return;
 		if (maximized || isMobile) return;
+		if (e.button !== 0) return; // left button / primary touch only
+
+		const titlebar = e.currentTarget as HTMLElement;
 		e.preventDefault();
+		// Throws NotFoundError if the pointer is already gone; capture is a nicety, not a
+		// prerequisite, so a failure must not abort the drag.
+		try {
+			titlebar.setPointerCapture(e.pointerId);
+		} catch {
+			/* drag without capture */
+		}
+
 		dragging = true;
 		dragOffsetX = e.clientX - (win?.x ?? 0);
 		dragOffsetY = e.clientY - (win?.y ?? 0);
 		bringToFront();
 
-		const onMove = (ev: MouseEvent) => {
+		const onMove = (ev: PointerEvent) => {
+			if (ev.pointerId !== e.pointerId) return;
 			const dw = window.innerWidth;
-			const dh = window.innerHeight - 32;
-			let nx = ev.clientX - dragOffsetX;
-			let ny = ev.clientY - dragOffsetY;
-			nx = Math.max(-200, Math.min(nx, dw - 40));
-			ny = Math.max(0, Math.min(ny, dh - 22));
+			const dh = window.innerHeight - taskbarHeight();
+			const nx = Math.max(-200, Math.min(ev.clientX - dragOffsetX, dw - 40));
+			const ny = Math.max(0, Math.min(ev.clientY - dragOffsetY, dh - 22));
 			windowsState.move(id, nx, ny);
 		};
 
-		const onUp = () => {
+		const onUp = (ev: PointerEvent) => {
+			if (ev.pointerId !== e.pointerId) return;
 			dragging = false;
-			window.removeEventListener('mousemove', onMove);
-			window.removeEventListener('mouseup', onUp);
+			try {
+				titlebar.releasePointerCapture(e.pointerId);
+			} catch {
+				/* never had it */
+			}
+			titlebar.removeEventListener('pointermove', onMove);
+			titlebar.removeEventListener('pointerup', onUp);
+			titlebar.removeEventListener('pointercancel', onUp);
 		};
 
-		window.addEventListener('mousemove', onMove);
-		window.addEventListener('mouseup', onUp);
+		titlebar.addEventListener('pointermove', onMove);
+		titlebar.addEventListener('pointerup', onUp);
+		titlebar.addEventListener('pointercancel', onUp);
 	}
 </script>
 
@@ -90,13 +114,13 @@
 		style={maximized || isMobile
 			? `left: 0; top: 0; z-index: ${win?.zIndex};`
 			: `left: ${win?.x ?? 0}px; top: ${win?.y ?? 0}px; z-index: ${win?.zIndex ?? 10};`}
-		onmousedown={(e) => { e.stopPropagation(); bringToFront(); }}
+		onpointerdown={(e) => { e.stopPropagation(); bringToFront(); }}
 	>
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div
 			class="titlebar"
 			class:dragging
-			onmousedown={onTitlebarDown}
+			onpointerdown={onTitlebarDown}
 			ondblclick={(e) => { if (maximizable && !isMobile && !(e.target as HTMLElement).closest('.titlebar-buttons')) toggleMaximize(); }}
 		>
 			<div class="titlebar-left">
@@ -120,8 +144,8 @@
 								<rect x="0" y="2" width="7" height="2" fill="currentColor" />
 							</svg>
 							<svg class="icon-aero" width="10" height="10" viewBox="0 0 10 10">
-								<rect x="2" y="0" width="8" height="8" fill="none" stroke="currentColor" stroke-width="1.2" />
-								<rect x="0" y="2" width="8" height="8" fill="var(--win-body-bg, #fff)" stroke="currentColor" stroke-width="1.2" />
+								<rect x="2.5" y="0.5" width="7" height="7" fill="none" stroke="currentColor" stroke-width="1" />
+								<rect x="0.5" y="2.5" width="7" height="7" fill="var(--win-body-bg, #fff)" stroke="currentColor" stroke-width="1" />
 							</svg>
 						{:else}
 							<svg class="icon-retro" width="9" height="9" viewBox="0 0 9 9">
@@ -129,7 +153,7 @@
 								<rect x="0" y="0" width="9" height="2" fill="currentColor" />
 							</svg>
 							<svg class="icon-aero" width="10" height="10" viewBox="0 0 10 10">
-								<rect x="1" y="1" width="8" height="8" fill="none" stroke="currentColor" stroke-width="1.2" />
+								<rect x="1" y="3" width="8" height="6" fill="none" stroke="currentColor" stroke-width="2" />
 							</svg>
 						{/if}
 					</button>
@@ -280,6 +304,28 @@
 		}
 	}
 
+	/* ============ TOUCH TARGETS (mobile) ================== */
+	/* 16×14 is a mouse-sized button. On a phone the close button is the only one left,
+	   so give it room rather than making people aim. */
+	.mobile .titlebar {
+		min-height: 40px;
+		padding: 2px 6px;
+
+		.tb-btn {
+			width: 36px;
+			height: 32px;
+		}
+
+		.titlebar-title {
+			font-size: 14px;
+		}
+
+		.titlebar-icon {
+			width: 20px;
+			height: 20px;
+		}
+	}
+
 	/* =================== WINDOW BODY ====================== */
 	.window-body {
 		padding: 4px;
@@ -349,7 +395,7 @@
 			background-image: none;
 			background-color: transparent;
 			border-right: 1px solid rgba(0,0,0,0.33);
-			color: #222;
+			color: #fff;
 			padding: 0;
 			position: relative;
 			cursor: pointer;
@@ -364,11 +410,9 @@
 				width: 48px;
 				background-color: transparent;
 				background-image: none;
-				color: #222;
 			}
 
 			&:disabled {
-				color: rgba(0, 0, 0, 0.20);
 				cursor: default;
 			}
 
@@ -380,6 +424,7 @@
 				display: block;
 				position: relative;
 				z-index: 1;
+				filter: drop-shadow(0 0 0.75px rgba(0,0,0,0.75));
 			}
 
 			&::before,
@@ -446,7 +491,7 @@
 				linear-gradient(rgba(255,255,255,0) 30px, rgba(255,255,255,0.70) 40%, rgba(255,255,255,0) 41%),
 				linear-gradient(140deg, rgba(255,255,255,0.33) 70px, transparent 100px),
 				linear-gradient(229deg, rgba(255,255,255,0.33) 70px, transparent 100px),
-				color(from var(--window-background-color) srgb r g b / 0.5);
+				var(--window-background-translucent);
 			box-shadow:
 				inset 0 0 0 1px rgba(255,255,255,0.667),
 				2px 2px 15px 1px rgba(0,0,0,0.93);
@@ -467,6 +512,11 @@
 				);
 				border-right-color: rgba(0,0,0,0.67);
 				box-shadow: inset 0 0 0 1px rgba(255,255,255,0.667);
+
+				&:disabled {
+					background-color: rgba(255, 255, 255, 0.4);
+					backdrop-filter: saturate(0.25);
+				}
 
 				&.close-btn {
 					background-color: #d54f36;
